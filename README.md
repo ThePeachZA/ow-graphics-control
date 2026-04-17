@@ -27,27 +27,27 @@ Overwatch Esports Broadcast Graphics Control Panel - A desktop application for c
 1. Download the latest release from [GitHub Releases](https://github.com/ThePeachZA/ow-graphics-control/releases)
 2. Extract the zip file
 3. Run `OW Graphics Control.exe`
+4. Go to the **Overlays** tab to start the overlay server
 
 ### Using Overlays in OBS
 
-1. Add a Browser Source in OBS
-2. Enable "Local file" and browse to overlay file in:
-   - `resources/overlays/` (packed version)
-   - Or use files in `public/overlays/` when running dev mode
-3. Set width/height: 1920x1080
-4. Check "Shutdown source when not visible" to save resources
+The app runs an embedded HTTP/WebSocket server (port 3001 by default). You must start the server from the app before overlays can connect.
 
-Example local URLs:
-- Game overlay: `http://localhost:5173/overlays/game-overlay.html`
-- Hero bans: `http://localhost:5173/overlays/hero-bans.html`
-- Map pool: `http://localhost:5173/overlays/map-pool.html`
-- Map select: `http://localhost:5173/overlays/map-select.html`
-- Team roster home: `http://localhost:5173/overlays/team-roster-home.html`
-- Team roster away: `http://localhost:5173/overlays/team-roster-away.html`
+1. Open the app and go to the **Overlays** tab
+2. Click **Start Server** to start the overlay server
+3. Add a Browser Source in OBS
+4. Enter the overlay URL:
+   - Game overlay: `http://localhost:3001/overlays/game-overlay.html`
+   - Hero bans: `http://localhost:3001/overlays/hero-bans.html`
+   - Map pool: `http://localhost:3001/overlays/map-pool.html`
+   - Map select: `http://localhost:3001/overlays/map-select.html`
+   - Team roster home: `http://localhost:3001/overlays/team-roster-home.html`
+   - Team roster away: `http://localhost:3001/overlays/team-roster-away.html`
+   - Row casters: `http://localhost:3001/overlays/row-casters.html`
+5. Set width/height: 1920x1080
+6. Check "Shutdown source when not visible" to save resources
 
-### WebSocket
-
-Overlays connect to `ws://localhost:8767` automatically to receive real-time updates.
+The overlay server must be running in the app for overlays to connect and receive updates. The app broadcasts state changes via WebSocket automatically when data changes.
 
 ## Development
 
