@@ -1,0 +1,183 @@
+.container {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.serverStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.statusDot.running {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.portField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.portField label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.portInput {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 14px;
+  width: 120px;
+}
+
+.portInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.portInput:disabled {
+  opacity: 0.5;
+}
+
+.autoStartField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.serverButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.urls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.urlItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.urlLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  min-width: 80px;
+}
+
+.urlValue {
+  flex: 1;
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--accent);
+  background: var(--bg-primary);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.currentMatch {
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.currentMatch h4 {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.currentMatch p {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.quickTalents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.instructions {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.instructions h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.instructions ol {
+  margin-left: 20px;
+}
+
+.instructions li {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+}

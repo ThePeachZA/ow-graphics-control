@@ -1,0 +1,478 @@
+.container {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  height: 100%;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebarHeader h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.teamList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.emptyList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.teamItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.teamItem:hover {
+  background: var(--bg-hover);
+}
+
+.teamItem.active {
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.teamItemColor {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.teamItemLogo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+  background: var(--bg-primary);
+  flex-shrink: 0;
+}
+
+.teamItemPlaceholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.teamItemInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.teamItemTag {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.teamItemName {
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamItemCount {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-tertiary);
+  padding: 2px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.main {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mainHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.teamHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.teamHeaderLogo {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--bg-primary);
+}
+
+.teamHeader h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.teamHeaderTag {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: var(--accent);
+  color: var(--text-primary);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.colorField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colorLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.colorInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.colorInput input[type="color"] {
+  width: 40px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.colorInput input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.colorInput span {
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--text-secondary);
+}
+
+.teamPreview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.previewLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.previewTag {
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.previewName {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.playersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.playersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.playersHeader h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.emptyPlayers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  text-align: center;
+}
+
+.playersList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.playerCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.playerCard:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-light);
+}
+
+.playerAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.playerAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playerAvatar span {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.playerInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.playerName {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.playerMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.playerHero {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  flex-shrink: 0;
+}
+
+.playerHero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.playerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formRow {
+  display: flex;
+  gap: 24px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.noSelection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroSelect {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.heroSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.heroSelect option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.heroPreview {
+  margin-top: 8px;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-tertiary);
+}
+
+.heroPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

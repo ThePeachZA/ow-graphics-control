@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Casters</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Light';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/ab6e05f8-3153-4842-823a-35e55273872a) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 100px;
+    }
+
+    /* Casters Container */
+    .casters-container {
+      display: flex;
+      gap: 20px;
+      height: 800px;
+      width: 100%;
+      max-width: 1720px;
+    }
+
+    .casters-container.single-caster {
+      max-width: 900px;
+    }
+
+    /* Camera Card */
+    .caster-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-radius: 6px;
+      overflow: hidden;
+      max-width: none;
+    }
+
+    /* Talent Image */
+    .talent-image {
+      flex: 1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #2d2d2d;
+    }
+
+    /* Talent Text */
+    .talent-text {
+      background: #fff;
+      padding: 15px 10px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Talent Name */
+    .talent-name {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 48px;
+      color: #090909;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* Subtext Row */
+    .talent-subtext {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Social Icon */
+    .social-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .social-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Social Handle */
+    .social-handle {
+      font-family: 'Apotek Light', sans-serif;
+      font-size: 24px;
+      color: #ac46f7;
+    }
+
+    /* Separator */
+    .separator {
+      font-family: 'Apotek Light', sans-serif;
+      font-size: 24px;
+      color: #ac46f7;
+    }
+
+    /* Pronouns */
+    .pronouns {
+      font-family: 'Apotek Light', sans-serif;
+      font-size: 24px;
+      color: #ac46f7;
+    }
+
+    /* Hidden elements */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="main-container">
+      <div class="casters-container" id="casters-container">
+        <!-- Caster cards will be dynamically created -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const el = {
+      castersContainer: document.getElementById('casters-container'),
+      overlay: document.querySelector('.overlay')
+    };
+
+    let ws = null;
+    let currentData = null;
+
+    function getTwitterIcon() {
+      return `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#ac46f7" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>`;
+    }
+
+    function getTwitchIcon() {
+      return `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#ac46f7" d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/>
+      </svg>`;
+    }
+
+    function getSocialIcon(platform) {
+      switch (platform) {
+        case 'twitter':
+          return getTwitterIcon();
+        case 'twitch':
+          return getTwitchIcon();
+        default:
+          return '';
+      }
+    }
+
+    function createCasterCard(caster) {
+      const card = document.createElement('div');
+      card.className = 'caster-card';
+
+      const imageStyle = caster.portraitUrl
+        ? `background-image: url('${caster.portraitUrl}')`
+        : 'background-color: #2d2d2d';
+
+      const socialIcon = caster.socialMedia?.platform 
+        ? `<div class="social-icon">${getSocialIcon(caster.socialMedia.platform)}</div>`
+        : '';
+      const socialHandle = caster.socialMedia?.handle 
+        ? `<span class="social-handle">@${caster.socialMedia.handle}</span>`
+        : '';
+      const separator = (socialIcon || socialHandle) && caster.pronouns 
+        ? '<span class="separator">|</span>' 
+        : '';
+      const pronouns = caster.pronouns 
+        ? `<span class="pronouns">${caster.pronouns}</span>` 
+        : '';
+
+      const socialHtml = (socialIcon || socialHandle) ? `
+        <div class="talent-subtext">
+          ${socialIcon}
+          ${socialHandle}
+          ${separator}
+          ${pronouns}
+        </div>
+      ` : caster.pronouns ? `
+        <div class="talent-subtext">
+          <span class="pronouns">${caster.pronouns}</span>
+        </div>
+      ` : '';
+
+      card.innerHTML = `
+        <div class="talent-image" style="${imageStyle}"></div>
+        <div class="talent-text">
+          <div class="talent-name">${caster.displayName || 'TALENT NAME'}</div>
+          ${socialHtml}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function updateCasters() {
+      const casters = currentData?.castersData || currentData?.casters?.castersData || [];
+
+      if (casters.length === 0) {
+        return;
+      }
+
+      el.castersContainer.innerHTML = '';
+      casters.forEach(caster => {
+        if (caster) {
+          el.castersContainer.appendChild(createCasterCard(caster));
+        }
+      });
+
+      el.castersContainer.classList.toggle('single-caster', casters.length === 1);
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'requestInit' }));
+      };
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+      const casters = d?.castersData || d?.casters?.castersData || [];
+
+      if (casters.length > 0) {
+        currentData = d;
+        updateCasters();
+      }
+
+      if (data.type === 'show') {
+        el.overlay.style.display = data.visible ? 'block' : 'none';
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>

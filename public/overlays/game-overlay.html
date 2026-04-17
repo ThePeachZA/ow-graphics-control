@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Game Overlay</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    /* === LAYOUT === */
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideFromCenter {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes swipeFromLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-600px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes swipeFromRight {
+      from {
+        opacity: 0;
+        transform: translateX(600px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* === TEAM BARS === */
+    .team-bar {
+      position: absolute;
+      top: 52px;
+      width: 525px;
+      height: 55px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      overflow: hidden;
+      clip-path: inset(0 round 6px);
+    }
+
+    .team-bar--home {
+      left: 43px;
+    }
+
+    .team-bar--away {
+      left: 1348px;
+    }
+
+    /* Home team order: Ban | Name | Logo | Score | Side */
+    .team-bar--home .team-bar__ban { order: 1; }
+    .team-bar--home .team-bar__name { order: 2; }
+    .team-bar--home .team-bar__logo { order: 3; }
+    .team-bar--home .team-bar__score { order: 4; }
+    .team-bar--home .team-bar__side { order: 5; }
+
+    /* Away team order (reversed): Side | Score | Logo | Name | Ban */
+    .team-bar--away .team-bar__side { order: 1; }
+    .team-bar--away .team-bar__score { order: 2; }
+    .team-bar--away .team-bar__logo { order: 3; }
+    .team-bar--away .team-bar__name { order: 4; }
+    .team-bar--away .team-bar__ban { order: 5; }
+
+    /* Swapped state: swap the flex orders so info stays consistent */
+    /* Home bar with swapped gets away's order (Side | Score | Logo | Name | Ban) */
+    .team-bar--home.swapped .team-bar__side { order: 1; }
+    .team-bar--home.swapped .team-bar__score { order: 2; }
+    .team-bar--home.swapped .team-bar__logo { order: 3; }
+    .team-bar--home.swapped .team-bar__name { order: 4; }
+    .team-bar--home.swapped .team-bar__ban { order: 5; }
+
+    /* Away bar with swapped gets home's order (Ban | Name | Logo | Score | Side) */
+    .team-bar--away.swapped .team-bar__ban { order: 1; }
+    .team-bar--away.swapped .team-bar__name { order: 2; }
+    .team-bar--away.swapped .team-bar__logo { order: 3; }
+    .team-bar--away.swapped .team-bar__score { order: 4; }
+    .team-bar--away.swapped .team-bar__side { order: 5; }
+
+    /* All team bar children must clip */
+    .team-bar > * {
+      clip-path: inset(0);
+    }
+
+    /* Default text colors (white bg) */
+    .team-bar--home .team-bar__name,
+    .team-bar--home .team-bar__score,
+    .team-bar--away .team-bar__name,
+    .team-bar--away .team-bar__score {
+      color: #090909;
+    }
+
+    /* Team colors enabled */
+    .team-bar--home.team-colored {
+      background: var(--team-a-color, #fff);
+    }
+
+    .team-bar--away.team-colored {
+      background: var(--team-b-color, #fff);
+    }
+
+    .team-bar.team-colored .team-bar__name {
+      color: var(--team-text-color, #090909);
+    }
+
+    .team-bar.team-colored .team-bar__score {
+      color: #090909;
+      background: #fff;
+    }
+
+    .team-bar__ban {
+      width: 47px;
+      height: 55px;
+      background: #090909;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .team-bar__ban.hidden {
+      display: none;
+    }
+
+    .team-bar__ban-icon {
+      width: 47px;
+      height: 43px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .team-bar__ban-text {
+      width: 47px;
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 10px;
+      color: #fff;
+      text-transform: uppercase;
+      line-height: 1.2;
+      padding-top: 2px;
+    }
+
+    .team-bar__name {
+      flex: 1;
+      font-size: 30px;
+      font-weight: 500;
+      color: #090909;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+    }
+
+    .team-bar--home .team-bar__name {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .team-bar--away .team-bar__name {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    /* Swapped state: swap text alignment */
+    .team-bar--home.swapped .team-bar__name {
+      justify-content: flex-start;
+      text-align: left;
+    }
+
+    .team-bar--away.swapped .team-bar__name {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .team-bar__logo {
+      width: 75px;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-color: var(--team-logo-bg, #eee);
+      flex-shrink: 0;
+      opacity: 0;
+    }
+
+    .team-bar__logo.animate-logo {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .team-bar__score {
+      width: 55px;
+      font-size: 38px;
+      font-weight: 600;
+      color: #090909;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .team-bar__side {
+      width: 55px;
+      height: 55px;
+      background: #090909;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .team-bar__side.hidden {
+      display: none;
+    }
+
+    .team-bar__side svg {
+      width: 46px;
+      height: 46px;
+    }
+
+    .team-bar__side-icon {
+      width: 40px;
+      height: 40px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    /* === TOP BARS === */
+    .top-bar {
+      position: absolute;
+      top: 13px;
+      height: 25px;
+      background: #090909;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .top-bar--left {
+      left: 43px;
+      width: 525px;
+      padding: 0 15px;
+      clip-path: inset(0 round 6px);
+    }
+
+    .top-bar--right {
+      left: 1348px;
+      width: 525px;
+      padding: 0;
+      clip-path: inset(0 round 6px);
+    }
+
+    .title-text {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .subtitle-text {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 500;
+      color: #ac46f7;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    /* === MODE ORDER === */
+    .mode-order-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .mode-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      text-transform: uppercase;
+      transition: all 0.2s;
+      padding: 0 2px;
+      position: relative;
+      min-width: 0;
+      opacity: 0;
+    }
+
+    .mode-item span {
+      min-width: 0;
+      white-space: nowrap;
+      font-size: inherit;
+    }
+
+    .mode-item--active {
+      background: rgba(172, 70, 247, 0.3);
+      color: #fff;
+    }
+
+    .mode-item--active-first {
+      background: rgba(172, 70, 247, 0.3);
+      color: #fff;
+    }
+
+    .mode-item--active-last {
+      background: rgba(172, 70, 247, 0.3);
+      color: #fff;
+    }
+
+    .mode-item--active-single {
+      background: rgba(172, 70, 247, 0.3);
+      color: #fff;
+    }
+
+    .mode-item--past {
+      opacity: 0.6;
+    }
+
+    .mode-item--future {
+      opacity: 0.5;
+    }
+
+    .mode-item__icon {
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-origin: content-box;
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      padding: 0;
+    }
+
+    /* === MATCH BUG === */
+    .match-bug {
+      position: absolute;
+      top: 12px;
+      left: 821px;
+      width: 278px;
+      height: 50px;
+      background: #151515;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0;
+    }
+
+    .match-bug__logo {
+      width: 50px;
+      height: 50px;
+      background-size: 30px 30px;
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-shrink: 0;
+      border-radius: 6px 0 0 6px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .match-bug__logo:last-of-type {
+      border-radius: 0 6px 6px 0;
+    }
+
+    .match-bug__logo--hidden {
+      visibility: hidden;
+    }
+
+    .match-bug__info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      height: 50px;
+      background: #090909;
+      padding: 0 10px;
+    }
+
+    .map-number {
+      font-size: 20px;
+      font-weight: 500;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .format-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #ac46f7;
+      text-transform: uppercase;
+    }
+
+    /* === ICON VISIBILITY === */
+    .icon-hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+
+    <!-- Home Team (Left) -->
+    <div class="team-bar team-bar--home" id="home-bar" style="opacity: 0;">
+      <div class="team-bar__ban hidden" id="home-ban">
+        <div class="team-bar__ban-icon" id="home-ban-icon"></div>
+        <span class="team-bar__ban-text" id="home-ban-text">1st ban</span>
+      </div>
+      <div class="team-bar__name" id="home-name">HOME</div>
+      <div class="team-bar__logo" id="home-logo"></div>
+      <div class="team-bar__score" id="home-score">0</div>
+      <div class="team-bar__side" id="home-side">
+        <div class="team-bar__side-icon" id="home-side-icon"></div>
+      </div>
+    </div>
+
+    <!-- Away Team (Right) -->
+    <div class="team-bar team-bar--away" id="away-bar" style="opacity: 0;">
+      <div class="team-bar__side" id="away-side">
+        <div class="team-bar__side-icon" id="away-side-icon"></div>
+      </div>
+      <div class="team-bar__score" id="away-score">0</div>
+      <div class="team-bar__logo" id="away-logo"></div>
+      <div class="team-bar__name" id="away-name">AWAY</div>
+      <div class="team-bar__ban hidden" id="away-ban">
+        <div class="team-bar__ban-icon" id="away-ban-icon"></div>
+        <span class="team-bar__ban-text" id="away-ban-text">2nd ban</span>
+      </div>
+    </div>
+
+    <!-- Title Bar -->
+    <div class="top-bar top-bar--left" id="title-bar" style="opacity: 0;">
+      <span class="title-text" id="title">TITLE</span>
+      <span class="subtitle-text" id="subtitle">SUBTITLE</span>
+    </div>
+
+    <!-- Mode Order -->
+    <div class="top-bar top-bar--right" id="mode-order" style="opacity: 0;">
+      <div class="mode-order-container" id="mode-order-content">
+        <!-- Modes populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Match Bug -->
+    <div class="match-bug" id="match-bug" style="opacity: 0;">
+      <div class="match-bug__logo match-bug__logo--hidden" id="tournament-logo"></div>
+      <div class="match-bug__info">
+        <span class="map-number" id="map-number">MAP 1</span>
+        <span class="format-text" id="format-text">FIRST TO 3</span>
+      </div>
+      <div class="match-bug__logo match-bug__logo--hidden" id="watermark-logo"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const el = {
+      title: document.getElementById('title'),
+      subtitle: document.getElementById('subtitle'),
+      homeName: document.getElementById('home-name'),
+      homeScore: document.getElementById('home-score'),
+      homeLogo: document.getElementById('home-logo'),
+      homeBan: document.getElementById('home-ban'),
+      homeBanIcon: document.getElementById('home-ban-icon'),
+      homeBanText: document.getElementById('home-ban-text'),
+      awayName: document.getElementById('away-name'),
+      awayScore: document.getElementById('away-score'),
+      awayLogo: document.getElementById('away-logo'),
+      awayBan: document.getElementById('away-ban'),
+      awayBanIcon: document.getElementById('away-ban-icon'),
+      awayBanText: document.getElementById('away-ban-text'),
+      mapNumber: document.getElementById('map-number'),
+      formatText: document.getElementById('format-text'),
+      tournamentLogo: document.getElementById('tournament-logo'),
+      watermarkLogo: document.getElementById('watermark-logo'),
+      modeOrderContent: document.getElementById('mode-order-content'),
+      overlay: document.querySelector('.overlay'),
+      homeBar: document.getElementById('home-bar'),
+      awayBar: document.getElementById('away-bar'),
+      titleBar: document.getElementById('title-bar'),
+      modeOrder: document.getElementById('mode-order'),
+      matchBug: document.getElementById('match-bug'),
+      homeSide: document.getElementById('home-side'),
+      awaySide: document.getElementById('away-side'),
+      homeSideIcon: document.getElementById('home-side-icon'),
+      awaySideIcon: document.getElementById('away-side-icon')
+    };
+
+    let gameModeIcons = {};
+    let sideIcons = { attack: null, defend: null };
+    let heroIcons = {};
+    let currentMapIndex = 0;
+    let animationsTriggered = false;
+
+    function triggerAnimations() {
+      el.matchBug.style.animation = 'slideFromCenter 0.6s cubic-bezier(0.3, 1, 0.4, 1) 0.8s both';
+
+      setTimeout(() => {
+        el.homeLogo.style.opacity = '1';
+        el.homeLogo.classList.add('animate-logo');
+        el.awayLogo.style.opacity = '1';
+        el.awayLogo.classList.add('animate-logo');
+      }, 1200);
+
+      setTimeout(() => {
+        el.homeBar.style.animation = 'swipeFromLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) both';
+        el.awayBar.style.animation = 'swipeFromRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) both';
+      }, 1000);
+
+      setTimeout(() => {
+        el.titleBar.style.animation = 'fadeSlideDown 1.2s cubic-bezier(0.3, 1, 0.4, 1) both';
+      }, 1400);
+
+      setTimeout(() => {
+        el.modeOrder.style.animation = 'fadeSlideDown 1s cubic-bezier(0.3, 1, 0.4, 1) both';
+        const modeItems = el.modeOrderContent.querySelectorAll('.mode-item');
+        modeItems.forEach((item, i) => {
+          setTimeout(() => {
+            item.style.opacity = '1';
+          }, i * 80);
+        });
+      }, 1800);
+    }
+
+    // Calculate contrast color (black or white) based on background luminance
+    function getContrastColor(hexColor) {
+      // Remove # if present
+      const hex = hexColor.replace('#', '');
+      // Parse RGB values
+      const r = parseInt(hex.substr(0, 2), 16);
+      const g = parseInt(hex.substr(2, 2), 16);
+      const b = parseInt(hex.substr(4, 2), 16);
+      // Calculate luminance
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      // Return black for light colors, white for dark colors
+      return luminance > 0.5 ? '#090909' : '#ffffff';
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      const ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function setSideIcons(side) {
+      // side: 0 = neutral (hide all), 1 = home attack, 2 = home defend
+      el.homeSideIcon.style.backgroundImage = '';
+      el.awaySideIcon.style.backgroundImage = '';
+
+      if (side === 1) {
+        // Home attacks, Away defends
+        if (sideIcons.attack) {
+          el.homeSideIcon.style.backgroundImage = `url(${sideIcons.attack})`;
+        }
+        if (sideIcons.defend) {
+          el.awaySideIcon.style.backgroundImage = `url(${sideIcons.defend})`;
+        }
+      } else if (side === 2) {
+        // Home defends, Away attacks
+        if (sideIcons.defend) {
+          el.homeSideIcon.style.backgroundImage = `url(${sideIcons.defend})`;
+        }
+        if (sideIcons.attack) {
+          el.awaySideIcon.style.backgroundImage = `url(${sideIcons.attack})`;
+        }
+      }
+    }
+
+    function setSideVisibility(side) {
+      // When side is 0 (neutral), hide both side indicators
+      el.homeSide.classList.toggle('hidden', side === 0);
+      el.awaySide.classList.toggle('hidden', side === 0);
+    }
+
+    function updateBanDisplay(data) {
+      // Clear previous state
+      el.homeBanIcon.style.backgroundImage = '';
+      el.awayBanIcon.style.backgroundImage = '';
+      el.homeBanText.textContent = '';
+      el.awayBanText.textContent = '';
+
+      // Check if any hero bans are set for current map
+      const currentBans = data.heroBans && data.heroBans[currentMapIndex];
+      const hasBans = currentBans && (currentBans.teamA?.length > 0 || currentBans.teamB?.length > 0);
+      
+      el.homeBan.classList.toggle('hidden', !hasBans);
+      el.awayBan.classList.toggle('hidden', !hasBans);
+
+      if (!hasBans) return;
+
+      // First ban team determines which side is 1st ban
+      const firstBanTeam = currentBans.firstBanTeam;
+      
+      // Get hero names
+      const homeHeroName = currentBans.teamA?.[0];
+      const awayHeroName = currentBans.teamB?.[0];
+      
+      // First ban hero
+      if (firstBanTeam === 'A' && homeHeroName && heroIcons[homeHeroName]) {
+        el.homeBanIcon.style.backgroundImage = `url(${heroIcons[homeHeroName]})`;
+        el.homeBanText.textContent = '1st ban';
+      } else if (firstBanTeam === 'B' && awayHeroName && heroIcons[awayHeroName]) {
+        el.awayBanIcon.style.backgroundImage = `url(${heroIcons[awayHeroName]})`;
+        el.awayBanText.textContent = '1st ban';
+      }
+      
+      // Second ban hero (opposite team)
+      if (firstBanTeam === 'A' && awayHeroName && heroIcons[awayHeroName]) {
+        el.awayBanIcon.style.backgroundImage = `url(${heroIcons[awayHeroName]})`;
+        el.awayBanText.textContent = '2nd ban';
+      } else if (firstBanTeam === 'B' && homeHeroName && heroIcons[homeHeroName]) {
+        el.homeBanIcon.style.backgroundImage = `url(${heroIcons[homeHeroName]})`;
+        el.homeBanText.textContent = '2nd ban';
+      }
+    }
+
+    function updateModeOrder(maps, currentMapIndex, firstTo) {
+      if (!maps || maps.length === 0) {
+        el.modeOrderContent.innerHTML = '';
+        return;
+      }
+      
+      // Calculate how many maps to show based on format
+      // First to 1 = 1 map, First to 2 = 3 maps, First to 3 = 5 maps, First to 4 = 7 maps
+      const mapsToShow = (firstTo || 3) * 2 - 1;
+      const visibleMaps = maps.slice(0, mapsToShow);
+      const isSingleMap = mapsToShow === 1;
+      
+      // Calculate icon size based on number of modes (container is 525px wide, 25px tall)
+      // Icon height should fit in container with padding
+      // Create mode items for visible maps
+      el.modeOrderContent.innerHTML = visibleMaps.map((map, idx) => {
+        const modeName = map.type ? map.type.toLowerCase() : '';
+        const iconUrl = modeName && modeName !== 'tbc' ? gameModeIcons[modeName] : null;
+        
+        let iconHtml = '';
+        if (iconUrl) {
+          iconHtml = `<div class="mode-item__icon" style="background-image: url('${iconUrl}')"></div>`;
+        }
+        
+        // Determine state
+        const isActive = idx === currentMapIndex;
+        const isPast = idx < currentMapIndex;
+        const isFirst = idx === 0;
+        const isLast = idx === visibleMaps.length - 1;
+        
+        let stateClass = 'mode-item--inactive';
+        if (isActive) {
+          if (isSingleMap) {
+            stateClass = 'mode-item--active-single';
+          } else if (isFirst) {
+            stateClass = 'mode-item--active-first';
+          } else if (isLast) {
+            stateClass = 'mode-item--active-last';
+          } else {
+            stateClass = 'mode-item--active';
+          }
+        } else if (isPast) {
+          stateClass = 'mode-item--past';
+        }
+        
+        // Show text content - use mode name for all states
+        const textContent = map.type || 'TBC';
+        
+        return `<div class="mode-item ${stateClass}" data-mode="${modeName}">${iconHtml}<span>${textContent}</span></div>`;
+      }).join('');
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+
+      if (data.type === 'init' && d.scoreboard) {
+        return updateOverlay({ type: 'scoreboard', data: d.scoreboard });
+      }
+
+      if (data.type === 'scoreboard' || data.type === 'gameOverlay') {
+        // Title
+        if (d.title) el.title.textContent = d.title;
+        if (d.subtitle) el.subtitle.textContent = d.subtitle;
+
+        // Teams
+        if (d.teamA) {
+          if (d.teamA.name) el.homeName.textContent = d.teamA.name;
+          if (d.teamA.logoUrl) el.homeLogo.style.backgroundImage = `url(${d.teamA.logoUrl})`;
+        }
+        if (d.teamB) {
+          if (d.teamB.name) el.awayName.textContent = d.teamB.name;
+          if (d.teamB.logoUrl) el.awayLogo.style.backgroundImage = `url(${d.teamB.logoUrl})`;
+        }
+
+        // Swap sides - swap the left positions and flex order
+        if (d.swapSides) {
+          el.homeBar.style.left = '1348px';
+          el.awayBar.style.left = '43px';
+          el.homeBar.classList.add('swapped');
+          el.awayBar.classList.add('swapped');
+        } else {
+          el.homeBar.style.left = '43px';
+          el.awayBar.style.left = '1348px';
+          el.homeBar.classList.remove('swapped');
+          el.awayBar.classList.remove('swapped');
+        }
+
+        // Team colors
+        if (d.teamColorsEnabled && d.teamA && d.teamB) {
+          el.homeBar.style.setProperty('--team-a-color', d.teamA.color || '#fff');
+          el.awayBar.style.setProperty('--team-b-color', d.teamB.color || '#fff');
+          // Calculate text color based on background luminance
+          const homeTextColor = getContrastColor(d.teamA.color || '#ffffff');
+          const awayTextColor = getContrastColor(d.teamB.color || '#ffffff');
+          el.homeBar.style.setProperty('--team-text-color', homeTextColor);
+          el.awayBar.style.setProperty('--team-text-color', awayTextColor);
+          // Set logo background colors
+          el.homeBar.style.setProperty('--team-logo-bg', d.teamA.logoBgColor || '#eee');
+          el.awayBar.style.setProperty('--team-logo-bg', d.teamB.logoBgColor || '#eee');
+          el.homeBar.classList.add('team-colored');
+          el.awayBar.classList.add('team-colored');
+        } else {
+          el.homeBar.classList.remove('team-colored');
+          el.awayBar.classList.remove('team-colored');
+          el.homeBar.style.removeProperty('--team-a-color');
+          el.awayBar.style.removeProperty('--team-b-color');
+          el.homeBar.style.removeProperty('--team-text-color');
+          el.awayBar.style.removeProperty('--team-text-color');
+          el.homeBar.style.removeProperty('--team-logo-bg');
+          el.awayBar.style.removeProperty('--team-logo-bg');
+        }
+
+        // Scores
+        if (d.scoreA !== undefined) el.homeScore.textContent = d.scoreA;
+        if (d.scoreB !== undefined) el.awayScore.textContent = d.scoreB;
+
+        // Side indicator
+        if (d.side !== undefined) {
+          setSideIcons(d.side);
+          setSideVisibility(d.side);
+        }
+
+        // Side icons
+        if (d.sideIcons) {
+          sideIcons = d.sideIcons;
+          if (d.side !== undefined) {
+            setSideIcons(d.side);
+          }
+        }
+
+        // Map
+        if (d.currentMapIndex !== undefined) {
+          currentMapIndex = d.currentMapIndex;
+        }
+        if (d.currentMapIndex !== undefined) el.mapNumber.textContent = `MAP ${currentMapIndex + 1}`;
+        if (d.firstTo) el.formatText.textContent = `FIRST TO ${d.firstTo}`;
+
+        // Mode order
+        if (d.maps && Array.isArray(d.maps)) {
+          updateModeOrder(d.maps, currentMapIndex, d.firstTo);
+        }
+
+        // Game mode icons
+        if (d.gameModeIcons) {
+          gameModeIcons = d.gameModeIcons;
+          if (d.maps) {
+            updateModeOrder(d.maps, currentMapIndex, d.firstTo);
+          }
+        }
+
+        // Hero icons (must be set before hero bans)
+        if (d.heroIcons) {
+          heroIcons = d.heroIcons;
+        }
+
+        // Hero bans
+        if (d.heroBans) {
+          updateBanDisplay(d);
+        }
+
+        // Tournament & Watermark logos
+        if (d.tournamentLogoUrl) {
+          el.tournamentLogo.style.backgroundImage = `url(${d.tournamentLogoUrl})`;
+          el.tournamentLogo.classList.remove('icon-hidden', 'match-bug__logo--hidden');
+        } else {
+          el.tournamentLogo.classList.add('match-bug__logo--hidden');
+        }
+        if (d.watermarkLogoUrl) {
+          el.watermarkLogo.style.backgroundImage = `url(${d.watermarkLogoUrl})`;
+          el.watermarkLogo.classList.remove('icon-hidden', 'match-bug__logo--hidden');
+        } else {
+          el.watermarkLogo.classList.add('match-bug__logo--hidden');
+        }
+
+        if (!animationsTriggered) {
+          triggerAnimations();
+          animationsTriggered = true;
+        } else {
+          el.titleBar.style.opacity = '1';
+          el.homeBar.style.opacity = '1';
+          el.awayBar.style.opacity = '1';
+          el.homeLogo.style.opacity = '1';
+          el.awayLogo.style.opacity = '1';
+          el.modeOrder.style.opacity = '1';
+          el.matchBug.style.opacity = '1';
+          const modeItems = el.modeOrderContent.querySelectorAll('.mode-item');
+          modeItems.forEach(item => {
+            item.style.opacity = '1';
+          });
+        }
+      }
+
+      if (data.type === 'show') {
+        el.overlay.style.display = data.visible ? 'block' : 'none';
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>

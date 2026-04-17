@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Map Pool</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Semibold';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Black';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/937c3a15-8a62-408b-9be9-2f4404f76f30) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 200px 100px;
+      row-gap: 20px;
+    }
+
+    .map-pool-header {
+      font-family: 'Apotek Black', sans-serif;
+      font-size: 96px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      line-height: 1;
+    }
+
+    .map-pool-container {
+      width: 1520px;
+      height: 800px;
+      display: flex;
+      align-items: stretch;
+      column-gap: 25px;
+      overflow: hidden;
+    }
+
+    .animate-container {
+      animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* === MAP COLUMN === */
+    .map-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .mode-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      background: #090909;
+      border-radius: 6px;
+      padding: 10px;
+    }
+
+    .mode-icon {
+      width: 50px;
+      height: 50px;
+      flex-shrink: 0;
+    }
+
+    .mode-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .mode-name {
+      font-family: 'Apotek Semibold', sans-serif;
+      font-size: 20px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    /* === MAP CARD === */
+    .map-card {
+      flex: 1;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: transparent;
+    }
+
+    .map-image {
+      flex: 1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #2d2d2d;
+      mix-blend-mode: darken;
+      position: relative;
+    }
+
+    .map-image.chosen {
+      filter: grayscale(100%);
+    }
+
+    .map-image.chosen::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+    }
+
+    .map-logo-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .map-logo-overlay img {
+      max-width: 80px;
+      max-height: 80px;
+      object-fit: contain;
+    }
+
+    .map-name {
+      background: #090909;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      flex-shrink: 0;
+    }
+
+    .map-name-text {
+      font-family: 'Apotek Semibold', sans-serif;
+      font-size: 18px;
+      color: #fff;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* === ICON VISIBILITY === */
+    .icon-hidden {
+      display: none !important;
+    }
+
+    .empty-pool {
+      color: #fff;
+      font-size: 24px;
+      text-align: center;
+      padding: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="main-container">
+      <h1 class="map-pool-header" style="opacity: 0;">Map Pool</h1>
+      <div class="map-pool-container" id="map-pool" style="opacity: 0;">
+        <!-- Map columns will be dynamically created -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const el = {
+      mapPool: document.getElementById('map-pool'),
+      overlay: document.querySelector('.overlay'),
+      header: document.querySelector('.map-pool-header')
+    };
+
+    let gameModeIcons = {};
+    let currentData = null;
+    let isRendering = false;
+    let animationsTriggered = false;
+
+    function triggerAnimations() {
+      el.header.style.animation = 'fadeSlideDown 1.2s cubic-bezier(0.3, 1, 0.4, 1) 0.8s both';
+
+      setTimeout(() => {
+        el.mapPool.classList.add('animate-container');
+      }, 1200);
+    }
+
+    function preloadImages(urls) {
+      urls.forEach(url => {
+        if (url) {
+          const img = new Image();
+          img.src = url;
+        }
+      });
+    }
+
+    function createModeHeader(modeName, modeData) {
+      if (modeData?.icons) {
+        preloadImages(modeData.icons.filter(Boolean));
+      }
+      
+      if (!modeData || !modeData.icons || modeData.icons.length === 0) {
+        return `<div class="mode-header"><span class="mode-name">${modeName}</span></div>`;
+      }
+      
+      const iconsHtml = modeData.icons
+        .filter(iconUrl => iconUrl)
+        .map(iconUrl => `<div class="mode-icon"><img src="${iconUrl}" alt="mode icon" /></div>`)
+        .join('');
+      
+      return `<div class="mode-header">${iconsHtml}<span class="mode-name">${modeName}</span></div>`;
+    }
+
+    function createMapCard(mapData) {
+      const card = document.createElement('div');
+      card.className = 'map-card';
+
+      if (mapData.imageUrl) {
+        preloadImages([mapData.imageUrl]);
+      }
+
+      const imageStyle = mapData.imageUrl
+        ? `background-image: url('${mapData.imageUrl}')`
+        : 'background-color: #2d2d2d';
+
+      const isChosen = mapData.chosenBy && mapData.chosenByLogo;
+      const imageClass = isChosen ? 'map-image chosen' : 'map-image';
+      
+      let logoHtml = '';
+      if (isChosen) {
+        logoHtml = `<div class="map-logo-overlay"><img src="${mapData.chosenByLogo}" alt="chosen by team" /></div>`;
+      }
+
+      card.innerHTML = `
+        <div class="${imageClass}" style="${imageStyle}"></div>
+        ${logoHtml}
+        <div class="map-name">
+          <span class="map-name-text">${mapData.name}</span>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    function createColumn(modeName, maps, modeData) {
+      const column = document.createElement('div');
+      column.className = 'map-column';
+
+      const headerHtml = createModeHeader(modeName, modeData);
+      column.innerHTML = headerHtml;
+
+      maps.forEach(map => {
+        column.appendChild(createMapCard(map));
+      });
+
+      return column;
+    }
+
+    function sortPoolData(poolData) {
+      const flashpointPush = ['Flashpoint', 'Push'];
+      const otherModes = [];
+      const fpPushModes = [];
+      
+      for (const modeGroup of poolData) {
+        if (flashpointPush.includes(modeGroup.modeName)) {
+          fpPushModes.push(modeGroup);
+        } else {
+          otherModes.push(modeGroup);
+        }
+      }
+      
+      otherModes.sort((a, b) => a.modeName.localeCompare(b.modeName));
+      fpPushModes.sort((a, b) => a.modeName.localeCompare(b.modeName));
+      
+      return [...otherModes, ...fpPushModes];
+    }
+
+    function updateMapPool() {
+      if (!currentData || isRendering) return;
+
+      const poolData = currentData.mapPoolData;
+
+      if (!poolData || poolData.length === 0) {
+        el.mapPool.innerHTML = '<div class="empty-pool">No maps in pool</div>';
+        return;
+      }
+
+      isRendering = true;
+
+      const sortedData = sortPoolData(poolData);
+
+      el.mapPool.innerHTML = '';
+
+      for (const modeGroup of sortedData) {
+        if (modeGroup.maps && modeGroup.maps.length > 0) {
+          el.mapPool.appendChild(createColumn(modeGroup.modeName, modeGroup.maps, { icons: modeGroup.modeIcons }));
+        }
+      }
+
+      isRendering = false;
+
+      if (!animationsTriggered) {
+        triggerAnimations();
+        animationsTriggered = true;
+      } else {
+        el.mapPool.style.opacity = '1';
+      }
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      const ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: 'requestInit' }));
+      };
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => {
+        setTimeout(connect, 2000);
+      };
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+
+      if (data.type === 'init') {
+        const mapPoolData = d.scoreboard?.mapPoolData || d.mapPoolData;
+        if (mapPoolData && mapPoolData.length > 0) {
+          return updateOverlay({ type: 'mapPool', data: { ...d, mapPoolData } });
+        }
+        return;
+      }
+
+      if (data.type === 'scoreboard' || data.type === 'mapPool') {
+        currentData = d;
+
+        if (d.gameModeIcons) {
+          gameModeIcons = d.gameModeIcons;
+        }
+
+        updateMapPool();
+      }
+
+      if (data.type === 'show') {
+        el.overlay.style.display = data.visible ? 'block' : 'none';
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>

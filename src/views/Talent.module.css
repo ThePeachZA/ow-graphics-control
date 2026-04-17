@@ -1,0 +1,236 @@
+.container {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+}
+
+.talentList {
+  height: fit-content;
+}
+
+.list {
+  padding: 8px;
+}
+
+.empty {
+  padding: 32px;
+  text-align: center;
+}
+
+.talentItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.talentItem:hover {
+  background: var(--bg-hover);
+}
+
+.talentItem.active {
+  background: rgba(124, 58, 237, 0.15);
+}
+
+.talentRole {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.talentName {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.talentPronouns {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.talentDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.noSelection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.socialSection {
+  margin-bottom: 8px;
+}
+
+.socialRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.platformSelect {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 14px;
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.platformSelect:hover {
+  border-color: var(--accent);
+}
+
+.portraitSection {
+  margin-bottom: 8px;
+}
+
+.roleGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.roleButton {
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.roleButton:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.roleButton.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.colorField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.colorInput {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colorInput input[type="color"] {
+  width: 48px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: none;
+}
+
+.colorInput input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput input[type="color"]::-webkit-color-swatch {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.colorInput span {
+  font-family: monospace;
+  color: var(--text-secondary);
+}
+
+.checkboxField label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkboxField input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.formActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.preview {
+  padding: 24px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: center;
+}
+
+.lowerThird {
+  background: linear-gradient(90deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  border-left: 4px solid var(--accent);
+  padding: 16px 32px;
+  min-width: 300px;
+}
+
+.ltRole {
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ltName {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+}

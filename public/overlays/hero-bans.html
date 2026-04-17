@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Hero Bans</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Semibold';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* === MAIN CONTAINER === */
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 150px 200px;
+      row-gap: 25px;
+    }
+
+    /* === HEADER === */
+    .header {
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .team-section {
+      display: flex;
+      align-items: stretch;
+      border-radius: 6px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .team-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 36px;
+      color: #fff;
+      text-transform: uppercase;
+      text-align: center;
+      width: 100%;
+      min-width: 200px;
+    }
+
+    .team-logo-container {
+      width: 100px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .team-logo {
+      width: 80px;
+      height: 80px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .team-score {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Apotek Semibold', sans-serif;
+      font-size: 48px;
+      color: #090909;
+      text-transform: uppercase;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .first-to-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090909;
+      border-radius: 6px;
+      padding: 0 25px;
+      min-width: 196px;
+      height: 80px;
+    }
+
+    .first-to-text {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 36px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    /* === HERO BANS SECTION === */
+    .hero-bans-section {
+      width: 100%;
+      height: 600px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .hero-ban-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .hero-ban-portrait {
+      flex: 1;
+      border-radius: 6px;
+    }
+
+    .hero-ban-portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    /* === FOOTER === */
+    .footer {
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .ban-order {
+      width: 100px;
+      height: 80px;
+      background: #ac46f7;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ban-order-text {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 24px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    .ban-hero-name {
+      height: 80px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 0 20px;
+    }
+
+    .ban-hero-name-text {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 36px;
+      color: #090909;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .map-info {
+      height: 80px;
+      background: #090909;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      min-width: 311px;
+    }
+
+    .map-info-type {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 24px;
+      color: #ac46f7;
+      text-transform: uppercase;
+    }
+
+    .map-info-name {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 36px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+
+    /* === ICON VISIBILITY === */
+    .icon-hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+    <div class="overlay">
+    <!-- Main container -->
+    <div class="main-container">
+      <!-- Header -->
+      <div class="header" id="header" style="opacity: 0;">
+        <!-- Home Team -->
+        <div class="team-section" id="home-section">
+          <div class="team-name" id="home-name">HOME TEAM</div>
+          <div class="team-logo-container">
+            <div class="team-logo" id="home-logo"></div>
+          </div>
+          <div class="team-score" id="home-score">0</div>
+        </div>
+
+        <!-- First To -->
+        <div class="first-to-section">
+          <span class="first-to-text" id="first-to-text">FIRST TO 3</span>
+        </div>
+
+        <!-- Away Team -->
+        <div class="team-section" id="away-section" style="flex-direction: row-reverse;">
+          <div class="team-name" id="away-name">AWAY TEAM</div>
+          <div class="team-logo-container">
+            <div class="team-logo" id="away-logo"></div>
+          </div>
+          <div class="team-score" id="away-score">0</div>
+        </div>
+      </div>
+
+      <!-- Hero Bans Section -->
+      <div class="hero-bans-section" id="hero-bans-section" style="opacity: 0;">
+        <!-- Home Bans -->
+        <div class="hero-ban-column" id="home-bans">
+          <!-- Hero bans will be populated here -->
+        </div>
+
+        <!-- Away Bans -->
+        <div class="hero-ban-column" id="away-bans">
+          <!-- Hero bans will be populated here -->
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer" id="footer" style="opacity: 0;">
+        <!-- First Ban Indicator -->
+        <div class="ban-order" id="ban-order-1-container">
+          <span class="ban-order-text" id="ban-order-1">FIRST</span>
+        </div>
+
+        <!-- Home Banned Hero -->
+        <div class="ban-hero-name">
+          <span class="ban-hero-name-text" id="home-ban-hero">-</span>
+        </div>
+
+        <!-- Map Info -->
+        <div class="map-info">
+          <span class="map-info-type" id="map-type">MAP 1</span>
+          <span class="map-info-name" id="map-name">MAP NAME</span>
+        </div>
+
+        <!-- Away Banned Hero -->
+        <div class="ban-hero-name">
+          <span class="ban-hero-name-text" id="away-ban-hero">-</span>
+        </div>
+
+        <!-- Second Ban Indicator -->
+        <div class="ban-order" id="ban-order-2-container">
+          <span class="ban-order-text" id="ban-order-2">SECOND</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const el = {
+      header: document.getElementById('header'),
+      heroBansSection: document.getElementById('hero-bans-section'),
+      footer: document.getElementById('footer'),
+      homeSection: document.getElementById('home-section'),
+      homeLogo: document.getElementById('home-logo'),
+      homeName: document.getElementById('home-name'),
+      homeScore: document.getElementById('home-score'),
+      homeBans: document.getElementById('home-bans'),
+      homeBanHero: document.getElementById('home-ban-hero'),
+      awaySection: document.getElementById('away-section'),
+      awayLogo: document.getElementById('away-logo'),
+      awayName: document.getElementById('away-name'),
+      awayScore: document.getElementById('away-score'),
+      awayBans: document.getElementById('away-bans'),
+      awayBanHero: document.getElementById('away-ban-hero'),
+      firstToText: document.getElementById('first-to-text'),
+      mapType: document.getElementById('map-type'),
+      mapName: document.getElementById('map-name'),
+      banOrder1: document.getElementById('ban-order-1'),
+      banOrder2: document.getElementById('ban-order-2')
+    };
+
+    let heroPortraits = {};
+    let currentMapIndex = 0;
+    let firstBanTeam = null;
+    let teamColorsEnabled = false;
+    let animationsTriggered = false;
+
+    function triggerAnimations() {
+      el.header.style.animation = 'fadeSlideDown 1.2s cubic-bezier(0.3, 1, 0.4, 1) 0.8s both';
+
+      setTimeout(() => {
+        el.heroBansSection.style.animation = 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both';
+      }, 1200);
+
+      setTimeout(() => {
+        el.footer.style.animation = 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both';
+      }, 1500);
+    }
+
+    function createHeroBanPortrait(heroName, portraitUrl) {
+      const container = document.createElement('div');
+      container.className = 'hero-ban-portrait';
+      if (portraitUrl) {
+        const img = document.createElement('img');
+        img.src = portraitUrl;
+        img.loading = 'lazy';
+        img.alt = heroName || 'Hero';
+        container.appendChild(img);
+      }
+      return container;
+    }
+
+    function updateHeroBans(teamABans, teamBBans) {
+      el.homeBans.innerHTML = '';
+      el.awayBans.innerHTML = '';
+
+      const maxBans = Math.max(teamABans.length, teamBBans.length);
+      
+      for (let i = 0; i < maxBans; i++) {
+        if (teamABans[i]) {
+          const portraitUrl = heroPortraits[teamABans[i]] || null;
+          const banElement = createHeroBanPortrait(teamABans[i], portraitUrl);
+          el.homeBans.appendChild(banElement);
+        }
+        if (teamBBans[i]) {
+          const portraitUrl = heroPortraits[teamBBans[i]] || null;
+          const banElement = createHeroBanPortrait(teamBBans[i], portraitUrl);
+          el.awayBans.appendChild(banElement);
+        }
+      }
+
+      // Update footer with current ban info
+      if (teamABans[currentMapIndex]) {
+        el.homeBanHero.textContent = teamABans[currentMapIndex];
+      } else {
+        el.homeBanHero.textContent = '-';
+      }
+
+      if (teamBBans[currentMapIndex]) {
+        el.awayBanHero.textContent = teamBBans[currentMapIndex];
+      } else {
+        el.awayBanHero.textContent = '-';
+      }
+    }
+
+    function updateBanOrder(firstBan) {
+      // Layout: [FIRST/LEFT] [Home Ban] [Map] [Away Ban] [SECOND/RIGHT]
+      // If home (A) banned first, LEFT shows FIRST, RIGHT shows SECOND
+      // If away (B) banned first, LEFT shows SECOND, RIGHT shows FIRST
+      if (firstBan === 'A') {
+        el.banOrder1.textContent = 'FIRST';
+        el.banOrder2.textContent = 'SECOND';
+      } else if (firstBan === 'B') {
+        el.banOrder1.textContent = 'SECOND';
+        el.banOrder2.textContent = 'FIRST';
+      } else {
+        el.banOrder1.textContent = 'FIRST';
+        el.banOrder2.textContent = 'SECOND';
+      }
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      const ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+
+      if (data.type === 'init' && d.scoreboard) {
+        return updateOverlay({ type: 'heroBans', data: d.scoreboard });
+      }
+
+      if (data.type === 'scoreboard' || data.type === 'gameOverlay' || data.type === 'heroBans') {
+        // Team colors
+        if (d.teamColorsEnabled !== undefined) {
+          teamColorsEnabled = d.teamColorsEnabled;
+        }
+
+        // Team data
+        if (d.teamA) {
+          if (d.teamA.logoUrl) {
+            el.homeLogo.style.backgroundImage = `url(${d.teamA.logoUrl})`;
+          }
+          el.homeName.textContent = d.teamA.name || 'HOME TEAM';
+          el.homeScore.textContent = d.scoreA || 0;
+          if (teamColorsEnabled && d.teamA.color) {
+            el.homeSection.style.backgroundColor = d.teamA.color;
+          } else {
+            el.homeSection.style.backgroundColor = '#090909';
+          }
+        }
+
+        if (d.teamB) {
+          if (d.teamB.logoUrl) {
+            el.awayLogo.style.backgroundImage = `url(${d.teamB.logoUrl})`;
+          }
+          el.awayName.textContent = d.teamB.name || 'AWAY TEAM';
+          el.awayScore.textContent = d.scoreB || 0;
+          if (teamColorsEnabled && d.teamB.color) {
+            el.awaySection.style.backgroundColor = d.teamB.color;
+          } else {
+            el.awaySection.style.backgroundColor = '#090909';
+          }
+        }
+
+        // First to
+        if (d.firstTo) {
+          el.firstToText.textContent = `FIRST TO ${d.firstTo}`;
+        }
+
+        // Hero bans
+        if (d.heroBans && Array.isArray(d.heroBans)) {
+          currentMapIndex = d.currentMapIndex || 0;
+          const currentMapBans = d.heroBans[currentMapIndex] || { firstBanTeam: null, teamA: [], teamB: [] };
+          firstBanTeam = currentMapBans.firstBanTeam;
+          updateHeroBans(currentMapBans.teamA, currentMapBans.teamB);
+          updateBanOrder(firstBanTeam);
+        }
+
+        // Hero portraits
+        if (d.heroPortraits) {
+          heroPortraits = d.heroPortraits;
+          // Re-render bans if we already have data
+          if (d.heroBans) {
+            const currentMapBans = d.heroBans[currentMapIndex] || { teamA: [], teamB: [] };
+            updateHeroBans(currentMapBans.teamA, currentMapBans.teamB);
+          }
+        }
+
+        // Map info
+        if (d.maps && d.maps[currentMapIndex] !== undefined) {
+          const mapIndex = currentMapIndex + 1;
+          el.mapType.textContent = `MAP ${mapIndex}`;
+          el.mapName.textContent = d.maps[currentMapIndex]?.name || 'TBD';
+        }
+
+        if (!animationsTriggered) {
+          triggerAnimations();
+          animationsTriggered = true;
+        } else {
+          el.header.style.opacity = '1';
+          el.heroBansSection.style.opacity = '1';
+          el.footer.style.opacity = '1';
+        }
+      }
+
+      if (data.type === 'show') {
+        document.querySelector('.overlay').style.display = data.visible ? 'block' : 'none';
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>

@@ -1,0 +1,893 @@
+.container {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerSideButtons {
+  display: flex;
+  align-items: center;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.headerSideButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.headerSideButton:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.headerSideButton.active {
+  background: var(--accent);
+  color: white;
+}
+
+.headerSideButton + .headerSideButton {
+  border-left: 1px solid var(--border);
+}
+
+.headerSideButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.headerImportBtn {
+  cursor: pointer;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.iconButton:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.statusDot.pre {
+  background: var(--warning);
+}
+
+.statusDot.live {
+  background: var(--error);
+  animation: pulse 1.5s infinite;
+}
+
+.statusDot.post {
+  background: var(--success);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.statusText {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.content {
+  margin-top: 24px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  text-align: center;
+}
+
+.emptyButtons {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.importButton {
+  cursor: pointer;
+}
+
+.importExportButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Setup Tab */
+.setupGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.teamsGrid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.teamSide {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.teamLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.teamSelect {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.teamSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.teamPreview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.teamColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.vsDivider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.scoreDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.scoreTeam {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.scoreControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scoreValue {
+  font-size: 48px;
+  font-weight: 700;
+  min-width: 60px;
+  text-align: center;
+}
+
+.scoreSeparator {
+  font-size: 32px;
+  color: var(--text-muted);
+}
+
+.statusButtons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Maps Tab */
+.mapsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.mapsHeader {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+.mapSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mapControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.winnerSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.winnerButtons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Bans Tab */
+.bansSection {
+  max-width: 800px;
+}
+
+.bansHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+.bansContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.banOrder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.banOrderButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.bansGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.teamBans h3 {
+  margin-bottom: 12px;
+  color: var(--text-secondary);
+}
+
+.banList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.banTag {
+  padding: 6px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+
+/* Live Tab */
+.liveSection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.liveActions {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.liveAction {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.liveAction h3 {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preview {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.previewScoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.previewTeam {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.previewTag {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.previewScore {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.previewMiddle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.previewMap {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.previewTitle {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.serverStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.timerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.timerValue {
+  font-size: 48px;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--text-primary);
+}
+
+.timerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.timerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.timerButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.serverStatus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.scoreSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scoreInfo {
+  text-align: center;
+}
+
+.manualScoreInputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mapSelectRow {
+  display: flex;
+  gap: 16px;
+}
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mapProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.lowerThirdForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.banSelector {
+  margin-top: 8px;
+}
+
+.heroSelect {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.heroSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.banTag {
+  padding: 6px 12px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.banTag:hover {
+  background: rgba(239, 68, 68, 0.4);
+}
+
+.mapScores {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scoreInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scoreVs {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.banActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.scoreboardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.bansTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bansTable th,
+.bansTable td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.bansTable th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.bansTable td {
+  font-size: 14px;
+}
+
+.banCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.banHero {
+  min-width: 100px;
+}
+
+.removeBan {
+  background: transparent;
+  border: none;
+  color: var(--error);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.removeBan:hover {
+  color: #ff6b6b;
+}
+
+.banSelect {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.banSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.banSelect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timerInputs {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.timerInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timerInputGroup label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.timerModeSelect {
+  max-width: 250px;
+}
+
+.talentSection {
+  max-width: 800px;
+}
+
+.talentGroup {
+  margin-bottom: 24px;
+}
+
+.talentGroup:last-child {
+  margin-bottom: 0;
+}
+
+.talentGroupTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.talentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.talentSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.talentLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.talentSelect {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.talentSelect option {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.talentCustomFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.brandingSection {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.brandingItem {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.brandingLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.sideSelection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sideButtons {
+  display: flex;
+  gap: 8px;
+}
+
+/* Map Pool Tab */
+.mapPoolSection {
+  max-width: 1200px;
+}
+
+.mapPoolGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.mapPoolStackedModes {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.mapPoolStackedModes .mapPoolMode {
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.mapPoolMode {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.mapPoolModeName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+.mapPoolMaps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mapPoolItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+
+.mapPoolItem:hover {
+  background: var(--bg-primary);
+}
+
+.mapPoolItem input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.mapPoolItem span {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.chosenBySection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.radioLabel input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}

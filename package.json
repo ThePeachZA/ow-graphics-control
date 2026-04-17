@@ -1,0 +1,70 @@
+{
+  "name": "ow-graphics-control",
+  "version": "1.0.0",
+  "description": "Overwatch Esports Broadcast Graphics Control Panel",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && electron-builder",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder --win --dir"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "electron-log": "^5.0.0",
+    "express": "^5.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0",
+    "ws": "^8.20.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/uuid": "^9.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "concurrently": "^8.2.0",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-electron": "^0.28.0",
+    "vite-plugin-electron-renderer": "^0.14.0",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.owgraphics.control",
+    "productName": "OW Graphics Control",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "public/assets/**/*",
+      "public/overlays/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "public/assets",
+        "to": "assets",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "public/overlays",
+        "to": "overlays",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "npmRebuild": false
+  }
+}

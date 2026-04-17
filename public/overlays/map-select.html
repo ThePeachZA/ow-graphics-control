@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Map Select</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Black';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/937c3a15-8a62-408b-9be9-2f4404f76f30) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* === ANIMATIONS === */
+    :root {
+      --anim-delay: 0.8s;
+      --anim-duration: 0.5s;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-40px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes cardReveal {
+      from {
+        opacity: 0;
+        transform: translateY(80px) scaleX(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scaleX(1);
+      }
+    }
+
+    @keyframes watermarkReveal {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* === INITIAL HIDDEN STATES === */
+    .map-select-title,
+    .map-card,
+    .watermark,
+    .tournament-logo {
+      opacity: 0;
+    }
+
+    /* === ANIMATION CLASSES === */
+    .animate-title {
+      animation: fadeSlideDown 1.2s cubic-bezier(0.3, 1, 0.4, 1) forwards;
+      animation-delay: var(--anim-delay);
+    }
+
+    .animate-card {
+      animation: cardReveal var(--anim-duration) var(--ease-out-expo) forwards;
+      animation-delay: var(--card-delay, var(--anim-delay));
+    }
+
+    .animate-card-expand {
+      flex: 1.8 !important;
+      transition: flex 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .animate-watermark {
+      animation: watermarkReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: 3.5s;
+    }
+
+    .animate-logo {
+      animation: fadeSlideUp var(--anim-duration) var(--ease-out-expo) forwards;
+      animation-delay: calc(var(--anim-delay) + 0.8s);
+    }
+
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 100px 200px;
+    }
+
+    /* === MAP SELECT TITLE === */
+    .map-select-title {
+      font-family: 'Apotek Black', sans-serif;
+      font-size: 128px;
+      color: #fff;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* === MAP CARDS CONTAINER === */
+    .maps-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* === MAP CARD === */
+    .map-card {
+      height: 600px;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      position: relative;
+      clip-path: inset(0 round 6px);
+      flex: 1;
+      min-width: 0;
+    }
+
+    .map-card--current {
+      flex: 1.8;
+    }
+
+    /* === MAP CARD LOGO === */
+    .map-card__logo {
+      position: absolute;
+      top: 151px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      z-index: 2;
+    }
+
+    .map-card__logo--hidden {
+      display: none;
+    }
+
+    /* === MAP CARD IMAGE === */
+    .map-card__image {
+      width: 100%;
+      flex: 1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      mix-blend-mode: darken;
+      position: relative;
+    }
+
+    .map-card__image--completed {
+      filter: grayscale(100%);
+    }
+
+    .map-card__image--completed::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      pointer-events: none;
+    }
+
+    .map-card__image--placeholder {
+      background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+
+    /* === MAP CARD TEXT === */
+    .map-card__text {
+      width: 100%;
+      min-height: 120px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+    }
+
+    .map-card__type {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 18px;
+      color: #ac46f7;
+      text-transform: uppercase;
+    }
+
+    .map-card__name {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 24px;
+      color: #090909;
+      text-transform: uppercase;
+    }
+
+    .map-card__chosen-by {
+      font-family: 'Apotek', sans-serif;
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .map-card__chosen-by--hidden {
+      display: none;
+    }
+
+    /* === SCORE BOARD === */
+    .map-card__board {
+      position: absolute;
+      top: 290px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      height: 60px;
+      background: rgba(9, 9, 9, 0.6);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      padding: 0 20px;
+      z-index: 2;
+    }
+
+    .map-card__board--hidden {
+      display: none;
+    }
+
+    .map-card__score {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 48px;
+      color: #fff;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .map-card__score-divider {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 48px;
+      color: #fff;
+      text-align: center;
+    }
+
+    /* === WATERMARK === */
+    .watermark {
+      height: 48px;
+      min-width: 366px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+      flex-shrink: 0;
+      margin-top: 30px;
+    }
+
+    .watermark__text {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 28px;
+      color: #090909;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* === TOURNAMENT LOGO === */
+    .tournament-logo {
+      position: absolute;
+      top: 13px;
+      right: 40px;
+      height: 48px;
+      width: auto;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .tournament-logo.icon-hidden {
+      display: none;
+    }
+  </style>
+</head>
+  <body>
+  <div class="overlay" id="overlay">
+    <!-- Main flex container -->
+    <div class="main-container">
+      <!-- Title -->
+      <div class="map-select-title" id="map-select-title">MAP SELECT</div>
+
+      <!-- Maps Container -->
+      <div class="maps-container" id="maps-container">
+        <!-- Maps will be dynamically created -->
+      </div>
+
+      <!-- Watermark (Powered by ThePeachZA) -->
+      <div class="watermark" id="watermark">
+        <span class="watermark__text">Powered by ThePeachZA</span>
+      </div>
+    </div>
+
+    <!-- Tournament Logo (outside flex, positioned absolutely) -->
+    <div class="tournament-logo" id="tournament-logo"></div>
+  </div>
+
+  <script>
+    const el = {
+      overlay: document.getElementById('overlay'),
+      title: document.getElementById('map-select-title'),
+      mapsContainer: document.getElementById('maps-container'),
+      watermark: document.getElementById('watermark'),
+      tournamentLogo: document.getElementById('tournament-logo')
+    };
+
+    let gameModeIcons = {};
+    let firstTo = 3;
+    let currentMapIndex = -1;
+    let loserPicks = true;
+    let animationsTriggered = false;
+    const TIEBREAKER_INDEX = 7;
+
+    function getMapsToShow(maps, firstToValue, currentIdx) {
+      const baseMaps = (firstToValue || 3) * 2 - 1;
+      const isTiebreakerCurrent = currentIdx === TIEBREAKER_INDEX;
+      return isTiebreakerCurrent ? baseMaps + 1 : baseMaps;
+    }
+
+    function triggerAnimations() {
+      el.title.classList.add('animate-title');
+      el.watermark.classList.add('animate-watermark');
+      el.tournamentLogo.classList.add('animate-logo');
+
+      const cards = el.mapsContainer.querySelectorAll('.map-card');
+      const currentCard = el.mapsContainer.querySelector('.map-card--current');
+
+      cards.forEach((card, i) => {
+        card.style.setProperty('--card-delay', `calc(var(--anim-delay) + ${0.1 + i * 0.1}s)`);
+        card.classList.add('animate-card');
+      });
+
+      if (currentCard) {
+        setTimeout(() => {
+          currentCard.classList.add('animate-card-expand');
+        }, 3500);
+      }
+    }
+
+    function resetAnimations() {
+      el.title.classList.remove('animate-title');
+      el.watermark.classList.remove('animate-watermark');
+      el.tournamentLogo.classList.remove('animate-logo');
+
+      const cards = el.mapsContainer.querySelectorAll('.map-card');
+      cards.forEach(card => {
+        card.classList.remove('animate-card', 'animate-card-expand');
+        card.style.removeProperty('--card-delay');
+      });
+    }
+
+    function createMapCard(mapData, index, teamAData, teamBData, isCurrent) {
+      const card = document.createElement('div');
+      card.className = isCurrent ? 'map-card map-card--current' : 'map-card';
+      card.dataset.index = index;
+
+      const mapNameRaw = mapData.name || '';
+      const mapTypeRaw = mapData.type || '';
+      const mapImage = mapData.mapImageUrl || '';
+      const isCompleted = mapData.completed;
+      const hasMap = !!mapNameRaw && mapNameRaw.toLowerCase() !== 'tbc';
+      const hasMode = !!mapTypeRaw && mapTypeRaw.toLowerCase() !== 'tbc';
+
+      const mapName = hasMap ? mapNameRaw : 'TBC';
+      const mapType = hasMode ? mapTypeRaw : 'TBC';
+
+      const modeName = hasMode ? mapType.toLowerCase() : '';
+      const modeIconUrl = modeName ? gameModeIcons[modeName] : null;
+
+      let logoContent = '';
+      let logoClass = 'map-card__logo';
+
+      if (isCompleted) {
+        if (mapData.scoreA > mapData.scoreB && teamAData && teamAData.logoUrl) {
+          logoContent = `background-image: url('${teamAData.logoUrl}')`;
+        } else if (mapData.scoreB > mapData.scoreA && teamBData && teamBData.logoUrl) {
+          logoContent = `background-image: url('${teamBData.logoUrl}')`;
+        }
+      } else if (!hasMap && hasMode && modeIconUrl) {
+        logoContent = `background-image: url('${modeIconUrl}')`;
+      } else {
+        logoClass += ' map-card__logo--hidden';
+      }
+
+      let imageClass = 'map-card__image';
+      let imageStyle = '';
+
+      if (isCompleted && mapImage) {
+        imageClass += ' map-card__image--completed';
+        imageStyle = `background-image: url('${mapImage}')`;
+      } else if (hasMap && mapImage) {
+        imageStyle = `background-image: url('${mapImage}')`;
+      } else {
+        imageClass += ' map-card__image--placeholder';
+      }
+
+      const boardClass = isCompleted ? 'map-card__board' : 'map-card__board map-card__board--hidden';
+
+      const showChosenBy = mapData.chosenByName && (isCompleted || isCurrent || !loserPicks);
+      const chosenByText = showChosenBy ? `${mapData.chosenByName}'s Pick` : '';
+      const chosenByClass = chosenByText ? 'map-card__chosen-by' : 'map-card__chosen-by map-card__chosen-by--hidden';
+
+      card.innerHTML = `
+        <div class="${logoClass}" id="logo-${index}" style="${logoContent}"></div>
+        <div class="${imageClass}" id="image-${index}" style="${imageStyle}"></div>
+        <div class="${boardClass}" id="board-${index}">
+          <div class="map-card__score" id="score-a-${index}">${mapData.scoreA || 0}</div>
+          <div class="map-card__score-divider">-</div>
+          <div class="map-card__score" id="score-b-${index}">${mapData.scoreB || 0}</div>
+        </div>
+        <div class="map-card__text">
+          <div class="map-card__type">${mapType || ''}</div>
+          <div class="map-card__name">${mapName || ''}</div>
+          <div class="${chosenByClass}">${chosenByText}</div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    function updateMapsContainer(maps, teamAData, teamBData) {
+      el.mapsContainer.innerHTML = '';
+
+      const mapsToShow = getMapsToShow(maps, firstTo, currentMapIndex);
+
+      for (let i = 0; i < mapsToShow; i++) {
+        const mapData = maps[i] || { name: '', type: '', scoreA: 0, scoreB: 0, mapImageUrl: '', completed: false, chosenByName: null };
+        const isCurrent = i === currentMapIndex;
+        const card = createMapCard(mapData, i, teamAData, teamBData, isCurrent);
+        el.mapsContainer.appendChild(card);
+      }
+
+      if (!animationsTriggered) {
+        triggerAnimations();
+        animationsTriggered = true;
+      } else {
+        const cards = el.mapsContainer.querySelectorAll('.map-card');
+        cards.forEach(card => {
+          card.style.opacity = '1';
+          card.style.transform = '';
+        });
+      }
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      const ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+
+      if (data.type === 'init' && d.scoreboard) {
+        return updateOverlay({ type: 'mapSelect', data: d.scoreboard });
+      }
+
+      if (data.type === 'scoreboard' || data.type === 'gameOverlay' || data.type === 'mapSelect') {
+        if (d.firstTo) {
+          firstTo = d.firstTo;
+        }
+
+        if (d.currentMapIndex !== undefined) {
+          currentMapIndex = d.currentMapIndex;
+        }
+
+        if (d.loserPicks !== undefined) {
+          loserPicks = d.loserPicks;
+        }
+
+        if (d.gameModeIcons) {
+          gameModeIcons = d.gameModeIcons;
+        }
+
+        if (d.maps) {
+          updateMapsContainer(d.maps, d.teamA, d.teamB);
+        }
+
+        if (d.tournamentLogoUrl) {
+          el.tournamentLogo.style.backgroundImage = `url(${d.tournamentLogoUrl})`;
+          el.tournamentLogo.classList.remove('icon-hidden');
+        } else {
+          el.tournamentLogo.classList.add('icon-hidden');
+        }
+      }
+
+      if (data.type === 'show') {
+        el.overlay.style.display = data.visible ? 'block' : 'none';
+        if (!data.visible) {
+          resetAnimations();
+        }
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>Team Roster - Home</title>
+  <style>
+    @font-face {
+      font-family: 'Apotek';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/930c6af4-df93-4ad1-bcc8-70f7dc350535) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Medium';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/1ba1930f-20e6-41b7-aa1c-b59ce1e844f7) format('woff');
+    }
+
+    @font-face {
+      font-family: 'Apotek Black';
+      font-style: normal;
+      font-weight: 400;
+      font-display: block;
+      src: url(https://design.penpot.app/assets/by-id/937c3a15-8a62-408b-9be9-2f4404f76f30) format('woff');
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Apotek', sans-serif;
+      background: transparent;
+    }
+
+    .overlay {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes fadeSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 200px;
+      row-gap: 25px;
+    }
+
+    /* === TEAM HEADER === */
+    .team-header {
+      width: 1500px;
+      height: 92px;
+      background: #090909;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .team-logo {
+      width: 100px;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-color: #eee;
+      flex-shrink: 0;
+    }
+
+    .team-name {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Apotek Black', sans-serif;
+      font-size: 72px;
+      color: #fff;
+      text-transform: uppercase;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    /* === CORE PLAYERS === */
+    .core-players {
+      width: 1500px;
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    /* === SUBSTITUTES === */
+    .substitutes {
+      width: 1500px;
+      height: 60px;
+      display: flex;
+      gap: 20px;
+      justify-content: flex-end;
+    }
+
+    /* === PLAYER CARD (CORE) === */
+    .player-card-core {
+      width: 284px;
+      height: 600px;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .player-card-core .role-badge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 55px;
+      height: 55px;
+      background: #090909;
+      border-end-start-radius: 6px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .player-card-core .role-badge img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+    }
+
+    .player-card-core .hero-image {
+      width: 100%;
+      flex: 1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .player-card-core .player-info {
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .player-card-core .player-name {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 36px;
+      color: #090909;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .player-card-core .player-pronouns {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 24px;
+      color: #444444;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* === PLAYER CARD (SUBSTITUTE) === */
+    .player-card-sub {
+      width: 284px;
+      height: 100%;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .player-card-sub .role-badge {
+      width: 55px;
+      height: 100%;
+      background: #090909;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .player-card-sub .role-badge img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+    }
+
+    .player-card-sub .player-info {
+      flex: 1;
+      height: 100%;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .player-card-sub .player-name {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 24px;
+      color: #090909;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .player-card-sub .player-pronouns {
+      font-family: 'Apotek Medium', sans-serif;
+      font-size: 18px;
+      color: #444444;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* === ICON VISIBILITY === */
+    .icon-hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="main-container">
+      <!-- Team Header -->
+      <div class="team-header" id="team-header" style="opacity: 0;">
+        <div class="team-logo" id="team-logo"></div>
+        <div class="team-name" id="team-name">TEAM NAME</div>
+      </div>
+
+      <!-- Core Players -->
+      <div class="core-players" id="core-players" style="opacity: 0;"></div>
+
+      <!-- Substitutes -->
+      <div class="substitutes" id="substitutes" style="opacity: 0;"></div>
+    </div>
+  </div>
+
+  <script>
+    const TEAM_SIDE = 'A';
+
+    const el = {
+      teamHeader: document.getElementById('team-header'),
+      teamLogo: document.getElementById('team-logo'),
+      teamName: document.getElementById('team-name'),
+      corePlayers: document.getElementById('core-players'),
+      substitutes: document.getElementById('substitutes'),
+      overlay: document.querySelector('.overlay')
+    };
+
+    let roleIcons = {};
+    let teamColorsEnabled = false;
+    let showPlayerPortraits = true;
+    let currentData = null;
+    let animationsTriggered = false;
+
+    function triggerAnimations() {
+      el.teamHeader.style.animation = 'fadeSlideDown 1.2s cubic-bezier(0.3, 1, 0.4, 1) 0.8s both';
+
+      setTimeout(() => {
+        el.corePlayers.style.opacity = '1';
+        const cards = el.corePlayers.querySelectorAll('.player-card-core');
+        cards.forEach((card, i) => {
+          const delay = i * 100;
+          setTimeout(() => {
+            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, delay);
+        });
+      }, 1200);
+
+      setTimeout(() => {
+        el.substitutes.style.opacity = '1';
+        const cards = el.substitutes.querySelectorAll('.player-card-sub');
+        cards.forEach((card, i) => {
+          const delay = (cards.length - 1 - i) * 100;
+          setTimeout(() => {
+            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, delay);
+        });
+      }, 2200);
+    }
+
+    function getRoleIcon(roleName) {
+      if (!roleName) return '';
+      const normalizedRole = roleName.toLowerCase();
+      const iconUrl = roleIcons[normalizedRole] || roleIcons[roleName];
+      if (!iconUrl) return '';
+      return `<img src="${iconUrl}" alt="${roleName}" />`;
+    }
+
+    function createCorePlayerCard(player, index) {
+      const card = document.createElement('div');
+      card.className = 'player-card-core';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(40px)';
+
+      let heroImageUrl;
+      if (showPlayerPortraits && player.portraitUrl) {
+        heroImageUrl = player.portraitUrl;
+      } else if (player.heroImageUrl) {
+        heroImageUrl = player.heroImageUrl;
+      } else {
+        heroImageUrl = null;
+      }
+      const heroImageHtml = heroImageUrl
+        ? `<div class="hero-image" style="background-image: url('${heroImageUrl}')"></div>`
+        : `<div class="hero-image" style="background-color: #2d2d2d"></div>`;
+
+      card.innerHTML = `
+        <div class="role-badge">${getRoleIcon(player.role)}</div>
+        ${heroImageHtml}
+        <div class="player-info">
+          <div class="player-name">${player.name || 'PLAYER'}</div>
+          <div class="player-pronouns">${player.pronouns || ''}</div>
+        </div>
+      `;
+
+      card.dataset.index = index;
+
+      return card;
+    }
+
+    function createSubCard(player, index, totalSubs) {
+      const card = document.createElement('div');
+      card.className = 'player-card-sub';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+
+      card.innerHTML = `
+        <div class="role-badge">${getRoleIcon(player.role)}</div>
+        <div class="player-info">
+          <div class="player-name">${player.name || 'PLAYER'}</div>
+          <div class="player-pronouns">${player.pronouns || ''}</div>
+        </div>
+      `;
+
+      card.dataset.index = index;
+
+      return card;
+    }
+
+    function updateRoster() {
+      if (!currentData) return;
+
+      const teamData = TEAM_SIDE === 'A' ? currentData.teamA : currentData.teamB;
+      const players = TEAM_SIDE === 'A' ? (currentData.teamAPlayers || []) : (currentData.teamBPlayers || []);
+
+      if (!teamData) {
+        el.teamName.textContent = 'NO TEAM';
+        el.corePlayers.innerHTML = '';
+        el.substitutes.innerHTML = '';
+        return;
+      }
+
+      // Update team header
+      if (teamData.logoUrl) {
+        el.teamLogo.style.backgroundImage = `url(${teamData.logoUrl})`;
+        el.teamLogo.classList.remove('icon-hidden');
+      } else {
+        el.teamLogo.style.backgroundImage = '';
+        el.teamLogo.classList.add('icon-hidden');
+      }
+
+      // Apply logo background color
+      el.teamLogo.style.backgroundColor = teamData.logoBgColor || '#eee';
+
+      el.teamName.textContent = teamData.name || 'TEAM NAME';
+
+      // Apply team color if enabled
+      if (teamColorsEnabled && teamData.color) {
+        el.teamHeader.style.backgroundColor = teamData.color;
+        // Calculate text contrast color
+        const hex = teamData.color.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        const textColor = luminance > 0.5 ? '#090909' : '#ffffff';
+        el.teamName.style.color = textColor;
+      } else {
+        el.teamHeader.style.backgroundColor = '#090909';
+        el.teamName.style.color = '#ffffff';
+      }
+
+      // Filter and populate core players
+      const corePlayersList = players.filter(p => p && p.position === 'core');
+      el.corePlayers.innerHTML = '';
+      corePlayersList.forEach((player, index) => {
+        const card = createCorePlayerCard(player, index);
+        el.corePlayers.appendChild(card);
+      });
+
+      // Filter and populate substitutes
+      const subs = players.filter(p => p && p.position === 'sub');
+      el.substitutes.innerHTML = '';
+      subs.forEach((player, index) => {
+        const card = createSubCard(player, index, subs.length);
+        el.substitutes.appendChild(card);
+      });
+    }
+
+    function connect() {
+      const port = new URLSearchParams(location.search).get('port') || '3001';
+      const ws = new WebSocket(`ws://localhost:${port}`);
+
+      ws.onmessage = ({ data }) => {
+        try {
+          updateOverlay(JSON.parse(data));
+        } catch (e) {
+          console.error('Parse error:', e);
+        }
+      };
+
+      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onerror = (e) => console.error('WS error:', e);
+    }
+
+    function updateOverlay(data) {
+      const d = data.data || data;
+
+      // Handle init message
+      if (data.type === 'init' && d.teamRoster) {
+        return updateOverlay({ type: 'teamRoster', data: d.teamRoster });
+      }
+
+      // Store all incoming data
+      if (data.type === 'scoreboard' || data.type === 'gameOverlay' || data.type === 'teamRoster') {
+        currentData = d;
+
+        // Update team colors
+        if (d.teamColorsEnabled !== undefined) {
+          teamColorsEnabled = d.teamColorsEnabled;
+        }
+
+        // Update role icons
+        if (d.roleIcons) {
+          roleIcons = d.roleIcons;
+        }
+
+        // Update player portrait setting
+        if (d.showPlayerPortraits !== undefined) {
+          showPlayerPortraits = d.showPlayerPortraits;
+        }
+
+        // Update roster display
+        updateRoster();
+
+        if (!animationsTriggered) {
+          triggerAnimations();
+          animationsTriggered = true;
+        } else {
+          el.teamHeader.style.opacity = '1';
+          el.corePlayers.style.opacity = '1';
+          el.substitutes.style.opacity = '1';
+          const coreCards = el.corePlayers.querySelectorAll('.player-card-core');
+          coreCards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          });
+          const subCards = el.substitutes.querySelectorAll('.player-card-sub');
+          subCards.forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          });
+        }
+      }
+
+      // Handle show/hide
+      if (data.type === 'show') {
+        el.overlay.style.display = data.visible ? 'block' : 'none';
+      }
+    }
+
+    connect();
+  </script>
+</body>
+</html>
