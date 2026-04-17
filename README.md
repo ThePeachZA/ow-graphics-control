@@ -6,7 +6,7 @@ Overwatch Esports Broadcast Graphics Control Panel - A desktop application for c
 
 - **Match Controller** - Control team rosters, hero bans, map pool, and scores
 - **Talent Management** - Manage casters, panel, and interviewees
-- **Tournament View** - Configure tournament brackets and match progression
+- **Tournament View** - Configure tournament brackets and match progression (Work in Progress)
 - **Live Overlays** - Real-time overlay control via WebSocket for OBS/browser sources:
   - Game overlay (score, teams, map)
   - Hero bans display
