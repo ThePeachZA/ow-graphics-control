@@ -36,7 +36,7 @@ const bundledAssetsPath = isDev
   : join(process.resourcesPath, 'assets')
 const tempAssetsPath = join(assetsPath, '_temp')
 
-const bundledCategories = ['maps', 'heroIcon', 'heroImage', 'gameModes', 'roles', 'sides']
+const bundledCategories = ['maps', 'heroIcon', 'heroImage', 'gameModes', 'roles', 'sides', 'heroes']
 const bundledAssetFolders: Record<string, string> = {
   'maps': 'maps',
   'gameModes': 'game-modes',
@@ -392,7 +392,77 @@ ipcMain.handle('bundled:scanAssets', async () => {
       return assets
     }
 
+    const manifestPath = join(bundledAssetsPath, 'manifest.json')
+    let manifest: Record<string, Record<string, string>> = {}
+    if (existsSync(manifestPath)) {
+      try {
+        manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
+      } catch (e) {
+        log.error('Failed to load manifest:', e)
+      }
+    }
+
+    const getName = (category: string, id: string): string => {
+      return manifest[category]?.[id] || id
+    }
+
+    const scannedHeroIds = new Set<string>()
+
+    const heroIconsPath = join(bundledAssetsPath, 'heroes', 'icons')
+    const heroPortraitsPath = join(bundledAssetsPath, 'heroes', 'portraits')
+    
+    if (existsSync(heroIconsPath)) {
+      const iconFiles = readdirSync(heroIconsPath).filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.jpeg'))
+      for (const file of iconFiles) {
+        const assetId = file.replace(/-icon\.(png|jpg|jpeg)$/, '')
+        if (scannedHeroIds.has(assetId)) continue;
+        scannedHeroIds.add(assetId);
+        
+        const hasIcon = true
+        const portraitFile = existsSync(join(heroPortraitsPath, `${assetId}.png`)) ? `${assetId}.png` : 
+                            existsSync(join(heroPortraitsPath, `${assetId}.jpg`)) ? `${assetId}.jpg` : null
+        const hasPortrait = !!portraitFile
+        
+        assets.heroes.push({
+          id: assetId,
+          name: getName('heroes', assetId),
+          iconPath: hasIcon ? '/heroes/icons/' + assetId + '-icon.png' : null,
+          portraitPath: hasPortrait ? '/heroes/portraits/' + portraitFile : null,
+          roleAssetId: null,
+          iconAssetId: null,
+          portraitAssetId: null
+        })
+      }
+    }
+
+    if (existsSync(heroPortraitsPath)) {
+      const portraitFiles = readdirSync(heroPortraitsPath).filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.jpeg'))
+      for (const file of portraitFiles) {
+        const assetId = file.replace(/\.(png|jpg|jpeg)$/, '')
+        if (scannedHeroIds.has(assetId)) continue;
+        scannedHeroIds.add(assetId);
+        
+        const iconFile = existsSync(join(heroIconsPath, `${assetId}-icon.png`)) ? `${assetId}-icon.png` : null
+        const hasIcon = !!iconFile
+        const hasPortrait = true
+        
+        assets.heroes.push({
+          id: assetId,
+          name: getName('heroes', assetId),
+          iconPath: hasIcon ? '/heroes/icons/' + iconFile : null,
+          portraitPath: '/heroes/portraits/' + file,
+          roleAssetId: null,
+          iconAssetId: null,
+          portraitAssetId: null
+        })
+      }
+    }
+
     for (const [category, folder] of Object.entries(bundledAssetFolders)) {
+      if (category === 'heroIcon' || category === 'heroImage' || category === 'heroes') {
+        continue;
+      }
+
       const folderPath = join(bundledAssetsPath, folder)
       if (existsSync(folderPath)) {
         const files = readdirSync(folderPath).filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.jpeg'))
@@ -401,23 +471,13 @@ ipcMain.handle('bundled:scanAssets', async () => {
           const assetId = file.replace(/\.(png|jpg|jpeg)$/, '')
           const relativePath = join(bundledAssetsPath, folder, file).replace(bundledAssetsPath, '').replace(/\\/g, '/')
           
-          if (category === 'heroIcon' || category === 'heroImage') {
-            assets.heroes.push({
-              id: assetId,
-              name: assetId,
-              path: relativePath,
-              category: category === 'heroIcon' ? 'icon' : 'portrait'
-            })
-          } else {
-            const targetCategory = category === 'gameModes' ? 'gameModes' : 
-                                   category === 'heroIcon' || category === 'heroImage' ? 'heroes' : category
-            if (!assets[targetCategory]) assets[targetCategory] = []
-            assets[targetCategory].push({
-              id: assetId,
-              name: assetId,
-              path: relativePath
-            })
-          }
+          const targetCategory = category === 'gameModes' ? 'gameModes' : category
+          if (!assets[targetCategory]) assets[targetCategory] = []
+          assets[targetCategory].push({
+            id: assetId,
+            name: getName(targetCategory, assetId),
+            path: relativePath
+          })
         }
       }
     }
@@ -434,6 +494,33 @@ ipcMain.handle('bundled:scanAssets', async () => {
   } catch (error) {
     log.error('Scan bundled assets error:', error)
     return { maps: [], gameModes: [], roles: [], sides: [], heroes: [], logos: [], portraits: [] }
+  }
+})
+
+ipcMain.handle('bundled:updateManifest', async (_, category: string, assetId: string, name: string) => {
+  try {
+    const manifestPath = join(bundledAssetsPath, 'manifest.json')
+    let manifest: Record<string, Record<string, string>> = {}
+    
+    if (existsSync(manifestPath)) {
+      try {
+        manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'))
+      } catch (e) {
+        log.error('Failed to load manifest for update:', e)
+      }
+    }
+
+    if (!manifest[category]) {
+      manifest[category] = {}
+    }
+    manifest[category][assetId] = name
+
+    writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
+    log.info(`Updated manifest: ${category}/${assetId} = ${name}`)
+    return true
+  } catch (error) {
+    log.error('Update manifest error:', error)
+    return false
   }
 })
 

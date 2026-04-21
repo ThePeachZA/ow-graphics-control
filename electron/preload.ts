@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   copyFile: (src: string, dest: string) => ipcRenderer.invoke('fs:copyFile', src, dest),
   readImageAsDataUrl: (filePath: string) => ipcRenderer.invoke('fs:readImageAsDataUrl', filePath),
   getBundledAssets: () => ipcRenderer.invoke('bundled:scanAssets'),
+  updateBundledManifest: (category: string, assetId: string, name: string) => ipcRenderer.invoke('bundled:updateManifest', category, assetId, name),
   importAssetFile: (srcPath: string, category: string, assetId?: string) => ipcRenderer.invoke('asset:importFile', srcPath, category, assetId),
   downloadAssetUrl: (url: string, category: string) => ipcRenderer.invoke('asset:downloadUrl', url, category),
   moveAssetToTemp: (filePath: string) => ipcRenderer.invoke('asset:moveToTemp', filePath),

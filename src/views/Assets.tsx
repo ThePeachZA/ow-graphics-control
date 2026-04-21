@@ -123,6 +123,7 @@ const HeroesSection: React.FC = () => {
       addedAt: new Date().toISOString()
     };
     dispatch({ type: 'ADD_ASSET', category: 'heroes', payload: newHero });
+    window.electronAPI.updateBundledManifest('heroes', newHero.id, newHero.name);
     setSelectedHeroId(newHero.id);
   };
 
@@ -130,6 +131,9 @@ const HeroesSection: React.FC = () => {
     if (!selectedHero) return;
     const updated = { ...selectedHero, [field]: value };
     dispatch({ type: 'UPDATE_ASSET', category: 'heroes', payload: updated });
+    if (field === 'name') {
+      window.electronAPI.updateBundledManifest('heroes', selectedHero.id, value);
+    }
   };
 
   const handleDeleteHero = () => {
@@ -416,6 +420,7 @@ const GameModesSection: React.FC = () => {
       gamemode: 'Control'
     };
     dispatch({ type: 'ADD_ASSET', category: 'gameModes', payload: newGameMode });
+    window.electronAPI.updateBundledManifest('gameModes', newGameMode.id, newGameMode.name);
     setSelectedGameModeId(newGameMode.id);
   };
 
@@ -423,6 +428,9 @@ const GameModesSection: React.FC = () => {
     if (!selectedGameMode) return;
     const updated = { ...selectedGameMode, [field]: value };
     dispatch({ type: 'UPDATE_ASSET', category: 'gameModes', payload: updated });
+    if (field === 'name') {
+      window.electronAPI.updateBundledManifest('gameModes', selectedGameMode.id, value);
+    }
   };
 
   const handleDeleteGameMode = () => {
@@ -641,6 +649,7 @@ const MapsSection: React.FC = () => {
       addedAt: new Date().toISOString()
     };
     dispatch({ type: 'ADD_ASSET', category: 'maps', payload: newMap });
+    window.electronAPI.updateBundledManifest('maps', newMap.id, newMap.name);
     setSelectedMapId(newMap.id);
   };
 
@@ -648,6 +657,9 @@ const MapsSection: React.FC = () => {
     if (!selectedMap) return;
     const updated = { ...selectedMap, [field]: value };
     dispatch({ type: 'UPDATE_ASSET', category: 'maps', payload: updated });
+    if (field === 'name') {
+      window.electronAPI.updateBundledManifest('maps', selectedMap.id, value);
+    }
   };
 
   const handleDeleteMap = () => {
@@ -1042,6 +1054,7 @@ const RolesSection: React.FC = () => {
       addedAt: new Date().toISOString()
     };
     dispatch({ type: 'ADD_ASSET', category: 'roles', payload: newRole });
+    window.electronAPI.updateBundledManifest('roles', newRole.id, newRole.name);
     setSelectedRoleId(newRole.id);
   };
 
@@ -1049,6 +1062,9 @@ const RolesSection: React.FC = () => {
     if (!selectedRole) return;
     const updated = { ...selectedRole, [field]: value };
     dispatch({ type: 'UPDATE_ASSET', category: 'roles', payload: updated });
+    if (field === 'name') {
+      window.electronAPI.updateBundledManifest('roles', selectedRole.id, value);
+    }
   };
 
   const handleDeleteRole = () => {
@@ -1284,6 +1300,7 @@ const SidesSection: React.FC = () => {
       addedAt: new Date().toISOString()
     };
     dispatch({ type: 'ADD_ASSET', category: 'sides', payload: newSide });
+    window.electronAPI.updateBundledManifest('sides', newSide.id, newSide.name);
     setSelectedSideId(newSide.id);
   };
 
@@ -1291,6 +1308,9 @@ const SidesSection: React.FC = () => {
     if (!selectedSide) return;
     const updated = { ...selectedSide, [field]: value };
     dispatch({ type: 'UPDATE_ASSET', category: 'sides', payload: updated });
+    if (field === 'name') {
+      window.electronAPI.updateBundledManifest('sides', selectedSide.id, value);
+    }
   };
 
   const handleDeleteSide = () => {
@@ -1514,6 +1534,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ category, label }) => {
       
       if (newAssets.length > 0) {
         dispatch({ type: 'ADD_ASSETS', category, payload: newAssets });
+        for (const asset of newAssets) {
+          window.electronAPI.updateBundledManifest(category, asset.id, asset.name);
+        }
       }
     }
   };

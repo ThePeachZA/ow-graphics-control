@@ -458,14 +458,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
               console.error('Failed to load bundled assets:', e);
             }
 
-            const mergeAssets = (savedAssets: any[], bundled: any[]): any[] => {
-              const savedById = new Map((savedAssets || []).map(a => [a.id, a]));
-              for (const b of bundled) {
-                if (!savedById.has(b.id)) {
-                  savedById.set(b.id, b);
-                }
-              }
-              return Array.from(savedById.values());
+            const useSavedOrBundled = (saved: any[], bundled: any[]): any[] => {
+              return (saved && saved.length > 0) ? saved : bundled;
             };
 
             const normalizedAssets = {
@@ -474,11 +468,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 ...(data.assets?.teamLogos || []).map(normalizeCategory)
               ],
               portraits: data.assets?.portraits || [],
-              gameModes: mergeAssets(data.assets?.gameModes, bundledAssets.gameModes),
-              roles: mergeAssets(data.assets?.roles, bundledAssets.roles),
-              sides: mergeAssets(data.assets?.sides, bundledAssets.sides),
-              maps: mergeAssets(data.assets?.maps, bundledAssets.maps),
-              heroes: mergeAssets(data.assets?.heroes, bundledAssets.heroes)
+              gameModes: useSavedOrBundled(data.assets?.gameModes, bundledAssets.gameModes),
+              roles: useSavedOrBundled(data.assets?.roles, bundledAssets.roles),
+              sides: useSavedOrBundled(data.assets?.sides, bundledAssets.sides),
+              maps: useSavedOrBundled(data.assets?.maps, bundledAssets.maps),
+              heroes: useSavedOrBundled(data.assets?.heroes, bundledAssets.heroes)
             };
             
             let currentMatch = data.currentMatch || null;

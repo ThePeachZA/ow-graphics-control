@@ -38,6 +38,7 @@ export interface ElectronAPI {
   copyFile: (src: string, dest: string) => Promise<boolean>;
   readImageAsDataUrl: (filePath: string) => Promise<string | null>;
   getBundledAssets: () => Promise<BundledAssets>;
+  updateBundledManifest: (category: string, assetId: string, name: string) => Promise<boolean>;
   importAssetFile: (srcPath: string, category: string, assetId?: string) => Promise<string | null>;
   downloadAssetUrl: (url: string, category: string) => Promise<string | null>;
   moveAssetToTemp: (filePath: string) => Promise<boolean>;
