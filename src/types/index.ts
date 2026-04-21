@@ -1,3 +1,13 @@
+export interface BundledAssets {
+  maps: any[];
+  gameModes: any[];
+  roles: any[];
+  sides: any[];
+  heroes: any[];
+  logos: any[];
+  portraits: any[];
+}
+
 export interface OpenDialogOptions {
   properties?: Array<'openFile' | 'openDirectory' | 'multiSelections'>;
   filters?: Array<{ name: string; extensions: string[] }>;
@@ -27,6 +37,7 @@ export interface ElectronAPI {
   mkdir: (dirPath: string) => Promise<boolean>;
   copyFile: (src: string, dest: string) => Promise<boolean>;
   readImageAsDataUrl: (filePath: string) => Promise<string | null>;
+  getBundledAssets: () => Promise<BundledAssets>;
   importAssetFile: (srcPath: string, category: string, assetId?: string) => Promise<string | null>;
   downloadAssetUrl: (url: string, category: string) => Promise<string | null>;
   moveAssetToTemp: (filePath: string) => Promise<boolean>;

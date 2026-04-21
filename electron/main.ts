@@ -37,6 +37,14 @@ const bundledAssetsPath = isDev
 const tempAssetsPath = join(assetsPath, '_temp')
 
 const bundledCategories = ['maps', 'heroIcon', 'heroImage', 'gameModes', 'roles', 'sides']
+const bundledAssetFolders: Record<string, string> = {
+  'maps': 'maps',
+  'gameModes': 'game-modes',
+  'roles': 'roles',
+  'sides': 'sides',
+  'heroIcon': 'heroes/icons',
+  'heroImage': 'heroes/portraits'
+}
 const userUploadCategories = ['logos', 'portraits']
 
 function getUserAssetFolder(category: string): string {
@@ -365,6 +373,67 @@ ipcMain.handle('fs:readDir', async (_, dirPath: string) => {
   } catch (error) {
     log.error('Read dir error:', error)
     return []
+  }
+})
+
+ipcMain.handle('bundled:scanAssets', async () => {
+  try {
+    const assets: Record<string, any[]> = {
+      maps: [],
+      gameModes: [],
+      roles: [],
+      sides: [],
+      heroes: [],
+      logos: [],
+      portraits: []
+    }
+
+    if (!existsSync(bundledAssetsPath)) {
+      return assets
+    }
+
+    for (const [category, folder] of Object.entries(bundledAssetFolders)) {
+      const folderPath = join(bundledAssetsPath, folder)
+      if (existsSync(folderPath)) {
+        const files = readdirSync(folderPath).filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.jpeg'))
+        
+        for (const file of files) {
+          const assetId = file.replace(/\.(png|jpg|jpeg)$/, '')
+          const relativePath = join(bundledAssetsPath, folder, file).replace(bundledAssetsPath, '').replace(/\\/g, '/')
+          
+          if (category === 'heroIcon' || category === 'heroImage') {
+            assets.heroes.push({
+              id: assetId,
+              name: assetId,
+              path: relativePath,
+              category: category === 'heroIcon' ? 'icon' : 'portrait'
+            })
+          } else {
+            const targetCategory = category === 'gameModes' ? 'gameModes' : 
+                                   category === 'heroIcon' || category === 'heroImage' ? 'heroes' : category
+            if (!assets[targetCategory]) assets[targetCategory] = []
+            assets[targetCategory].push({
+              id: assetId,
+              name: assetId,
+              path: relativePath
+            })
+          }
+        }
+      }
+    }
+
+    log.info('Scanned bundled assets:', {
+      maps: assets.maps.length,
+      gameModes: assets.gameModes.length,
+      roles: assets.roles.length,
+      sides: assets.sides.length,
+      heroes: assets.heroes.length
+    })
+
+    return assets
+  } catch (error) {
+    log.error('Scan bundled assets error:', error)
+    return { maps: [], gameModes: [], roles: [], sides: [], heroes: [], logos: [], portraits: [] }
   }
 })
 

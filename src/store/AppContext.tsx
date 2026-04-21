@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef, ReactNode } from 'react';
-import { Team, Player, Match, Talent, MapSlot, MapHeroBans, AssetManifest, AssetEntry, Tournament, BracketMatch, BracketRound } from '../types';
+import { Team, Player, Match, Talent, MapSlot, MapHeroBans, AssetManifest, AssetEntry, Tournament, BracketMatch, BracketRound, BundledAssets } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
@@ -450,17 +450,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
               ...asset,
               category: asset.category === 'teamLogos' ? 'logos' : asset.category
             });
+
+            let bundledAssets: BundledAssets = { maps: [], gameModes: [], roles: [], sides: [], heroes: [], logos: [], portraits: [] };
+            try {
+              bundledAssets = await window.electronAPI.getBundledAssets() as BundledAssets;
+            } catch (e) {
+              console.error('Failed to load bundled assets:', e);
+            }
+
+            const mergeAssets = (savedAssets: any[], bundled: any[]): any[] => {
+              const savedById = new Map((savedAssets || []).map(a => [a.id, a]));
+              for (const b of bundled) {
+                if (!savedById.has(b.id)) {
+                  savedById.set(b.id, b);
+                }
+              }
+              return Array.from(savedById.values());
+            };
+
             const normalizedAssets = {
               logos: [
                 ...(data.assets?.logos || []).map(normalizeCategory),
                 ...(data.assets?.teamLogos || []).map(normalizeCategory)
               ],
               portraits: data.assets?.portraits || [],
-              gameModes: data.assets?.gameModes || [],
-              roles: data.assets?.roles || [],
-              sides: data.assets?.sides || [],
-              maps: data.assets?.maps || [],
-              heroes: data.assets?.heroes || []
+              gameModes: mergeAssets(data.assets?.gameModes, bundledAssets.gameModes),
+              roles: mergeAssets(data.assets?.roles, bundledAssets.roles),
+              sides: mergeAssets(data.assets?.sides, bundledAssets.sides),
+              maps: mergeAssets(data.assets?.maps, bundledAssets.maps),
+              heroes: mergeAssets(data.assets?.heroes, bundledAssets.heroes)
             };
             
             let currentMatch = data.currentMatch || null;

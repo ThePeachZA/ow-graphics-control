@@ -4,5 +4,6 @@ dist-electron/
 release/
 nul
 *.log
+*.zip
 .DS_Store
 Thumbs.db
