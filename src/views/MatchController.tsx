@@ -150,9 +150,12 @@ export const MatchController: React.FC = () => {
       bans.teamB.forEach(n => bannedHeroNames.add(n));
     }
     await Promise.all(state.assets.heroes.map(async (hero) => {
-      if (bannedHeroNames.has(hero.name) && hero.path) {
-        const portraitUrl = await getImageUrl(hero.path);
-        if (portraitUrl) heroPortraits[hero.name] = portraitUrl;
+      if (bannedHeroNames.has(hero.name)) {
+        const portraitPath = hero.path || hero.portraitPath;
+        if (portraitPath) {
+          const portraitUrl = await getImageUrl(portraitPath);
+          if (portraitUrl) heroPortraits[hero.name] = portraitUrl;
+        }
       }
     }));
     cachedHeroPortraitsRef.current = heroPortraits;

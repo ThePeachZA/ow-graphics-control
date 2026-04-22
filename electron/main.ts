@@ -36,7 +36,7 @@ const bundledAssetsPath = isDev
   : join(process.resourcesPath, 'assets')
 const tempAssetsPath = join(assetsPath, '_temp')
 
-const bundledCategories = ['maps', 'heroIcon', 'heroImage', 'gameModes', 'roles', 'sides', 'heroes']
+const bundledCategories = ['maps', 'heroIcon', 'heroImage', 'gameModes', 'roles', 'sides', 'heroes', 'logos']
 const bundledAssetFolders: Record<string, string> = {
   'maps': 'maps',
   'gameModes': 'game-modes',
@@ -62,7 +62,8 @@ function getBundledAssetFolder(category: string): string {
     'heroImage': 'heroes/portraits',
     'gameModes': 'game-modes',
     'roles': 'roles',
-    'sides': 'sides'
+    'sides': 'sides',
+    'logos': 'logos'
   };
   return join(bundledAssetsPath, categoryMap[category] || category);
 }
@@ -402,8 +403,18 @@ ipcMain.handle('bundled:scanAssets', async () => {
       }
     }
 
-    const getName = (category: string, id: string): string => {
-      return manifest[category]?.[id] || id
+        const getManifestEntry = (category: string, id: string): { name: string; tag?: string } | null => {
+      return manifest[category]?.[id] || null
+    }
+
+    const getRoleAssetId = (roleName: string): string | null => {
+      const roleEntry = Object.entries(manifest.roles || {}).find(([_, v]) => v.name.toLowerCase() === roleName?.toLowerCase());
+      return roleEntry ? roleEntry[0] : null;
+    }
+
+    const getGameModeAssetId = (gameModeName: string): string | null => {
+      const gmEntry = Object.entries(manifest.gameModes || {}).find(([_, v]) => v.name.toLowerCase() === gameModeName?.toLowerCase());
+      return gmEntry ? gmEntry[0] : null;
     }
 
     const scannedHeroIds = new Set<string>()
@@ -418,6 +429,10 @@ ipcMain.handle('bundled:scanAssets', async () => {
         if (scannedHeroIds.has(assetId)) continue;
         scannedHeroIds.add(assetId);
         
+        const heroEntry = getManifestEntry('heroes', assetId);
+        const roleTag = heroEntry?.tag;
+        const roleAssetId = roleTag ? getRoleAssetId(roleTag) : null;
+        
         const hasIcon = true
         const portraitFile = existsSync(join(heroPortraitsPath, `${assetId}.png`)) ? `${assetId}.png` : 
                             existsSync(join(heroPortraitsPath, `${assetId}.jpg`)) ? `${assetId}.jpg` : null
@@ -425,10 +440,10 @@ ipcMain.handle('bundled:scanAssets', async () => {
         
         assets.heroes.push({
           id: assetId,
-          name: getName('heroes', assetId),
+          name: heroEntry?.name || assetId,
           iconPath: hasIcon ? '/heroes/icons/' + assetId + '-icon.png' : null,
           portraitPath: hasPortrait ? '/heroes/portraits/' + portraitFile : null,
-          roleAssetId: null,
+          roleAssetId: roleAssetId,
           iconAssetId: null,
           portraitAssetId: null
         })
@@ -442,16 +457,20 @@ ipcMain.handle('bundled:scanAssets', async () => {
         if (scannedHeroIds.has(assetId)) continue;
         scannedHeroIds.add(assetId);
         
+        const heroEntry = getManifestEntry('heroes', assetId);
+        const roleTag = heroEntry?.tag;
+        const roleAssetId = roleTag ? getRoleAssetId(roleTag) : null;
+        
         const iconFile = existsSync(join(heroIconsPath, `${assetId}-icon.png`)) ? `${assetId}-icon.png` : null
         const hasIcon = !!iconFile
         const hasPortrait = true
         
         assets.heroes.push({
           id: assetId,
-          name: getName('heroes', assetId),
+          name: heroEntry?.name || assetId,
           iconPath: hasIcon ? '/heroes/icons/' + iconFile : null,
           portraitPath: '/heroes/portraits/' + file,
-          roleAssetId: null,
+          roleAssetId: roleAssetId,
           iconAssetId: null,
           portraitAssetId: null
         })
@@ -473,11 +492,19 @@ ipcMain.handle('bundled:scanAssets', async () => {
           
           const targetCategory = category === 'gameModes' ? 'gameModes' : category
           if (!assets[targetCategory]) assets[targetCategory] = []
-          assets[targetCategory].push({
+          
+          const entry = getManifestEntry(targetCategory, assetId)
+          let assetData: any = {
             id: assetId,
-            name: getName(targetCategory, assetId),
+            name: entry?.name || assetId,
             path: relativePath
-          })
+          }
+          
+          if (targetCategory === 'maps' && entry?.tag) {
+            assetData.gameModeAssetId = getGameModeAssetId(entry.tag)
+          }
+          
+          assets[targetCategory].push(assetData)
         }
       }
     }
