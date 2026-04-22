@@ -42,6 +42,7 @@ const bundledAssetFolders: Record<string, string> = {
   'gameModes': 'game-modes',
   'roles': 'roles',
   'sides': 'sides',
+  'heroes': 'heroes/portraits',
   'heroIcon': 'heroes/icons',
   'heroImage': 'heroes/portraits'
 }
@@ -58,6 +59,7 @@ function getUserAssetFolder(category: string): string {
 function getBundledAssetFolder(category: string): string {
   const categoryMap: Record<string, string> = {
     'maps': 'maps',
+    'heroes': 'heroes/portraits',
     'heroIcon': 'heroes/icons',
     'heroImage': 'heroes/portraits',
     'gameModes': 'game-modes',
